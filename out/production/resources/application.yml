@@ -1,0 +1,28 @@
+server:
+  error:
+    whitelabel:
+      enabled: false
+
+spring:
+  profiles:
+    active: local
+
+  devtools:
+    add-properties: false
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+  jackson:
+    visibility:
+      field: any
+
+  session:
+    store-type: redis
+
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate:
+        globally_quoted_identifiers: true

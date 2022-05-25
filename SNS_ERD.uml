@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>DATABASE</ID>
+  <OriginalElement>97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.comment</OriginalElement>
+  <nodes>
+    <node x="478.5958482791167" y="-28.415835411471335">97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.media</node>
+    <node x="174.1644268327325" y="449.40843552391334">97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.comment</node>
+    <node x="-427.6984160600358" y="119.85892156699023">97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.follow</node>
+    <node x="721.5272697255009" y="482.4084355239133">97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.comment_hash_tag</node>
+    <node x="181.1644268327325" y="130.85892156699023">97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.people_tag</node>
+    <node x="178.6644268327325" y="290.1336785454518">97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.comment_tag</node>
+    <node x="174.1644268327325" y="-231.6905923899329">97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.post</node>
+    <node x="195.1644268327325" y="-28.415835411471335">97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.post_tag</node>
+    <node x="721.5272697255009" y="-209.6905923899329">97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.post_hash_tag</node>
+    <node x="472.5958482791167" y="108.85892156699023">97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.media_tag</node>
+    <node x="-110.76699461365166" y="-82.68332507459041">97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.post_like</node>
+    <node x="-124.26699461365166" y="108.85892156699023">97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.user</node>
+    <node x="-119.76699461365166" y="322.4011682085709">97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.comment_like</node>
+    <node x="748.0272697255009" y="130.85892156699023">97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.hash_tag</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.post_like" target="97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.post" relationship="REFERENCES">
+      <point x="0.0" y="-60.0" />
+      <point x="-29.76699461365166" y="-175.691" />
+      <point x="-94.5" y="-15.0004076100671" />
+    </edge>
+    <edge source="97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.post_tag" target="97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.people_tag" relationship="REFERENCES">
+      <point x="0.0" y="49.0" />
+      <point x="0.0" y="-49.0" />
+    </edge>
+    <edge source="97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.comment_like" target="97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.comment" relationship="REFERENCES">
+      <point x="0.0" y="60.0" />
+      <point x="-29.76699461365166" y="546.408" />
+      <point x="-94.5" y="14.999564476086675" />
+    </edge>
+    <edge source="97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.comment_like" target="97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.user" relationship="REFERENCES">
+      <point x="0.0" y="-60.0" />
+      <point x="0.0" y="71.0" />
+    </edge>
+    <edge source="97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.post" target="97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.user" relationship="REFERENCES">
+      <point x="-94.5004268327325" y="-4.076100670999949E-4" />
+      <point x="120.0" y="-160.691" />
+      <point x="120.0" y="191.0" />
+      <point x="94.49999461365167" y="11.141078433009767" />
+    </edge>
+    <edge source="97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.post_like" target="97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.user" relationship="REFERENCES">
+      <point x="0.0" y="60.0" />
+      <point x="0.0" y="-71.0" />
+    </edge>
+    <edge source="97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.post_hash_tag" target="97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.hash_tag" relationship="REFERENCES">
+      <point x="0.0" y="49.0" />
+      <point x="0.0" y="-49.0" />
+    </edge>
+    <edge source="97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.people_tag" target="97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.user" relationship="REFERENCES">
+      <point x="-87.5" y="-3.858921566990233" />
+      <point x="94.5" y="-3.858921566990233" />
+    </edge>
+    <edge source="97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.comment_hash_tag" target="97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.hash_tag" relationship="REFERENCES">
+      <point x="-3.5" y="-49.00000000000006" />
+      <point x="0.0" y="49.0" />
+    </edge>
+    <edge source="97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.media" target="97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.post" relationship="REFERENCES">
+      <point x="0.0" y="-49.0" />
+      <point x="552.0958482791167" y="-92.25813804217148" />
+      <point x="94.5" y="68.43245434776142" />
+    </edge>
+    <edge source="97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.media_tag" target="97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.people_tag" relationship="REFERENCES">
+      <point x="-79.4998233414608" y="7.843300977583567E-5" />
+      <point x="87.4995731672675" y="7.843300977583567E-5" />
+    </edge>
+    <edge source="97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.comment_tag" target="97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.comment" relationship="REFERENCES">
+      <point x="-4.2683273250077036E-4" y="49.000321454548214" />
+      <point x="-4.2683273250077036E-4" y="-82.00043552391332" />
+    </edge>
+    <edge source="97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.comment_hash_tag" target="97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.comment" relationship="REFERENCES">
+      <point x="-119.0" y="0.0" />
+      <point x="94.5" y="0.0" />
+    </edge>
+    <edge source="97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.follow" target="97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.user" relationship="REFERENCES">
+      <point x="93.5" y="0.0" />
+      <point x="-94.5" y="0.0" />
+    </edge>
+    <edge source="97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.post_tag" target="97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.post" relationship="REFERENCES">
+      <point x="0.0" y="-49.0" />
+      <point x="0.0" y="71.0" />
+    </edge>
+    <edge source="97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.post_hash_tag" target="97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.post" relationship="REFERENCES">
+      <point x="-115.5" y="0.0" />
+      <point x="94.5" y="0.0" />
+    </edge>
+    <edge source="97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.comment" target="97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.post" relationship="REFERENCES">
+      <point x="94.5" y="-15.0" />
+      <point x="689.8115590023087" y="516.4084355239133" />
+      <point x="689.8115590023087" y="-145.6905923899329" />
+      <point x="94.5" y="15.0" />
+    </edge>
+    <edge source="97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.comment_tag" target="97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.people_tag" relationship="REFERENCES">
+      <point x="0.0" y="-49.0" />
+      <point x="0.0" y="49.0" />
+    </edge>
+    <edge source="97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.comment" target="97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.user" relationship="REFERENCES">
+      <point x="-94.5004268327325" y="-4.355239133246869E-4" />
+      <point x="120.0" y="531.408" />
+      <point x="120.0" y="191.0" />
+      <point x="94.49999461365167" y="11.141078433009767" />
+    </edge>
+    <edge source="97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.media_tag" target="97faf025-71c1-4d65-8bf1-cf612c62eb10.TABLE:sns.media" relationship="REFERENCES">
+      <point x="0.0" y="-71.0" />
+      <point x="0.0" y="49.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic" zoom="0.9260969976905312" showDependencies="false" x="266.0" y="191.0" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Columns</Category>
+    <Category>Comments</Category>
+    <Category>Key columns</Category>
+    <Category>Virtual foreign keys</Category>
+  </Categories>
+</Diagram>
+

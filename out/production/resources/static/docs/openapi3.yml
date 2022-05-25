@@ -1,0 +1,39 @@
+openapi: 3.0.1
+info:
+  title: SNS API
+  description: SNS project
+  version: 0.0.1
+servers:
+- url: http://localhost
+tags: []
+paths:
+  /api/v1/users:
+    post:
+      tags:
+      - api
+      summary: Register a user
+      description: Register a user
+      operationId: user-register
+      requestBody:
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/api-v1-users-101812687'
+            examples:
+              user-register:
+                value: "{\"email\":\"email@email.com\",\"password\":\"rawPassword\"\
+                  }"
+      responses:
+        "201":
+          description: "201"
+components:
+  schemas:
+    api-v1-users-101812687:
+      type: object
+      properties:
+        password:
+          type: string
+          description: User password.
+        email:
+          type: string
+          description: User email.

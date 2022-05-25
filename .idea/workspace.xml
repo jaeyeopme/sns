@@ -1,0 +1,688 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="a3afd39c-338a-469e-85df-3966dce43494" name="Changes" comment="build: add gradle dependencies test container and security crypto&#10;&#10;build: add gradle dependency &#10;feat: add Encoder interface and wrapper classes such as RawPassword and EncodedPassword&#10;feat: add encoding passwords when user register&#10;test: add test property file&#10;test: add user repository test with test container" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CoverageOptionsProvider">
+    <option name="myAddOrReplace" value="0" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <task path="$PROJECT_DIR$">
+          <activation />
+        </task>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="sns" type="f1a62948:ProjectNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="sns" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="sns" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="application" type="c8890929:TasksNode$1" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="sns" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="build" type="c8890929:TasksNode$1" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="sns" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="documentation" type="c8890929:TasksNode$1" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="sns" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="verification" type="c8890929:TasksNode$1" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="package.json" />
+        <option value="Interface" />
+        <option value="JUnit5 Test Class" />
+        <option value="Kotlin Class" />
+        <option value="com.haulmont.jpb.JpaEntity" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="FormatOnSaveOptions">
+    <option name="myAllFileTypesSelected" value="true" />
+    <option name="mySelectedFileTypes">
+      <set />
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="feature/project-setting" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RESET_MODE" value="MIXED" />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
+  </component>
+  <component name="GitToolBoxStore">
+    <option name="projectConfigVersion" value="5" />
+    <option name="recentBranches">
+      <RecentBranches>
+        <option name="branchesForRepo">
+          <list>
+            <RecentBranchesForRepo>
+              <option name="branches">
+                <list>
+                  <RecentBranch>
+                    <option name="branchName" value="main" />
+                    <option name="lastUsedInstant" value="1653461614" />
+                  </RecentBranch>
+                  <RecentBranch>
+                    <option name="branchName" value="feature/project-setting" />
+                    <option name="lastUsedInstant" value="1653461607" />
+                  </RecentBranch>
+                  <RecentBranch>
+                    <option name="branchName" value="develop" />
+                    <option name="lastUsedInstant" value="1653461589" />
+                  </RecentBranch>
+                  <RecentBranch>
+                    <option name="branchName" value="feature/user-registration" />
+                    <option name="lastUsedInstant" value="1653461518" />
+                  </RecentBranch>
+                </list>
+              </option>
+              <option name="repositoryRootUrl" value="file://$PROJECT_DIR$" />
+            </RecentBranchesForRepo>
+          </list>
+        </option>
+      </RecentBranches>
+    </option>
+  </component>
+  <component name="GoLibraries">
+    <option name="indexEntireGoPath" value="true" />
+  </component>
+  <component name="JpbToolWindowState">
+    <option name="myId2FirstActivated">
+      <map>
+        <entry key="com.haulmont.jpb.jpaInspector" value="true" />
+        <entry key="com.haulmont.jpb.jpaPalette" value="true" />
+        <entry key="com.haulmont.jpb.jpaStructure" value="true" />
+      </map>
+    </option>
+    <option name="myId2Visible">
+      <map>
+        <entry key="com.haulmont.jpb.jpaInspector" value="false" />
+        <entry key="com.haulmont.jpb.jpaPalette" value="false" />
+        <entry key="com.haulmont.jpb.jpaStructure" value="false" />
+      </map>
+    </option>
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="OptimizeOnSaveOptions">
+    <option name="myAllFileTypesSelected" value="true" />
+    <option name="mySelectedFileTypes">
+      <set />
+    </option>
+  </component>
+  <component name="ProjectId" id="26jR5QK1SgMEUTVtsIQU7DhwlJ0" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+    <option name="showVisibilityIcons" value="true" />
+    <option name="sortByType" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;JPA.DatabaseSchemaImportDialog&quot;: &quot;97faf025-71c1-4d65-8bf1-cf612c62eb10&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.format.on.save.advertiser.fired&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
+    &quot;ToolWindowBuild.ShowToolbar&quot;: &quot;false&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;com.intellij.openapi.externalSystem.service.settings.ExternalSystemGroupConfigurable&quot;: &quot;SELECTIVE&quot;,
+    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/jaeyeop/workspace/java/sns&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Artifacts&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;spring.configuration.checksum&quot;: &quot;392ccc924420d5f81cdb5a1d229b2694&quot;
+  },
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;mariadb&quot;
+    ]
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="me.jaeyeopme.sns.entity.interaction" />
+      <recent name="me.jaeyeopme.sns.entity.tag" />
+      <recent name="me.jaeyeopme.sns.entity.post" />
+      <recent name="me.jaeyeopme.sns.entity" />
+      <recent name="me.jaeyeopme.sns.entity.embeddable" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/main/java/me/jaeyeopme/sns/domain/post" />
+      <recent name="$PROJECT_DIR$/src/main/resources" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/src/main/java" />
+      <recent name="$PROJECT_DIR$/src/main/resources" />
+      <recent name="$PROJECT_DIR$/.idea" />
+      <recent name="$PROJECT_DIR$/docker" />
+    </key>
+    <key name="CreateTestDialog.Recents.Supers">
+      <recent name="" />
+    </key>
+    <key name="MoveInnerDialog.RECENTS_KEY">
+      <recent name="me.jaeyeopme.sns.record" />
+    </key>
+    <key name="CreateTestDialog.RecentsKey">
+      <recent name="me.jaeyeopme.sns.repository" />
+      <recent name="me.jaeyeopme.sns.service" />
+      <recent name="me.jaeyeopme.sns.controller" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="me.jaeyeopme.sns.entity.interaction" />
+      <recent name="me.jaeyeopme.sns.entity.hashTag" />
+    </key>
+    <key name="ImportMappingsDialog.RecentPackages">
+      <recent name="" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Spring Boot.SnsApplication">
+    <configuration name="sns [bootJar]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="bootJar" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="sns [build]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="build" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="sns [clean]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="clean" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="sns [test]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="test" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="UserControllerTest.given_correctEmailAndPassword_returnCreated" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="sns.test" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="me.jaeyeopme.sns.controller.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="me.jaeyeopme.sns.controller" />
+      <option name="MAIN_CLASS_NAME" value="me.jaeyeopme.sns.controller.UserControllerTest" />
+      <option name="METHOD_NAME" value="given_correctEmailAndPassword_returnCreated" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="me in sns.test" type="JUnit" factoryName="JUnit" nameIsGenerated="true">
+      <module name="sns.test" />
+      <option name="PACKAGE_NAME" value="me" />
+      <option name="MAIN_CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="TEST_OBJECT" value="package" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="JetRunConfigurationType">
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <option name="filePath" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="SnsApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+      <option name="ACTIVE_PROFILES" />
+      <option name="ENABLE_LAUNCH_OPTIMIZATION" value="false" />
+      <module name="sns.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="me.jaeyeopme.sns.SnsApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="docker[database, cache, document]: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" server-name="Docker">
+      <deployment type="docker-compose.yml">
+        <settings>
+          <option name="composeProjectName" value="sns" />
+          <option name="envFilePath" value="" />
+          <option name="services">
+            <list>
+              <option value="database" />
+              <option value="cache" />
+              <option value="document" />
+            </list>
+          </option>
+          <option name="sourceFilePath" value="docker/docker-compose.yml" />
+        </settings>
+      </deployment>
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Docker.docker[database, cache, document]: Compose Deployment" />
+      <item itemvalue="Gradle.sns [build]" />
+      <item itemvalue="Gradle.sns [test]" />
+      <item itemvalue="Gradle.sns [bootJar]" />
+      <item itemvalue="Gradle.sns [clean]" />
+      <item itemvalue="JUnit.me in sns.test" />
+      <item itemvalue="JUnit.UserControllerTest.given_correctEmailAndPassword_returnCreated" />
+      <item itemvalue="Spring Boot.SnsApplication" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.UserControllerTest.given_correctEmailAndPassword_returnCreated" />
+        <item itemvalue="Gradle.sns [clean]" />
+        <item itemvalue="Gradle.sns [bootJar]" />
+        <item itemvalue="Gradle.sns [test]" />
+        <item itemvalue="Gradle.sns [build]" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="a3afd39c-338a-469e-85df-3966dce43494" name="Changes" comment="" />
+      <created>1647934824238</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1647934824238</updated>
+      <workItem from="1647934825340" duration="11716000" />
+      <workItem from="1647959470285" duration="194000" />
+      <workItem from="1647960049998" duration="694000" />
+      <workItem from="1648003611200" duration="8764000" />
+      <workItem from="1648094941455" duration="8820000" />
+      <workItem from="1648299367625" duration="5478000" />
+      <workItem from="1648868299521" duration="142000" />
+      <workItem from="1648868456768" duration="2447000" />
+      <workItem from="1648960984717" duration="790000" />
+      <workItem from="1648984159975" duration="147000" />
+      <workItem from="1648984311399" duration="11033000" />
+      <workItem from="1649045418179" duration="726000" />
+      <workItem from="1649046148228" duration="664000" />
+      <workItem from="1649047058544" duration="50000" />
+      <workItem from="1649047658846" duration="146000" />
+      <workItem from="1649047817773" duration="124000" />
+      <workItem from="1649047959657" duration="6930000" />
+      <workItem from="1649057464375" duration="1997000" />
+      <workItem from="1649062303321" duration="4103000" />
+      <workItem from="1649074220342" duration="12756000" />
+      <workItem from="1649143451047" duration="2619000" />
+      <workItem from="1649214174887" duration="38500000" />
+      <workItem from="1649458000552" duration="286000" />
+      <workItem from="1649458314608" duration="137000" />
+      <workItem from="1649458472091" duration="18739000" />
+      <workItem from="1649556484022" duration="3775000" />
+      <workItem from="1649582206476" duration="12290000" />
+      <workItem from="1649636702741" duration="19043000" />
+      <workItem from="1649829121211" duration="21747000" />
+      <workItem from="1649940093338" duration="1381000" />
+      <workItem from="1649948004236" duration="3231000" />
+      <workItem from="1650248712462" duration="3522000" />
+      <workItem from="1650264705345" duration="11176000" />
+      <workItem from="1650516192410" duration="7519000" />
+      <workItem from="1650594374252" duration="3845000" />
+      <workItem from="1650718277539" duration="10787000" />
+      <workItem from="1650734113405" duration="4507000" />
+      <workItem from="1650762534674" duration="219000" />
+      <workItem from="1650762812274" duration="27311000" />
+      <workItem from="1650793269818" duration="586000" />
+      <workItem from="1650794402464" duration="219000" />
+      <workItem from="1650794691104" duration="470000" />
+      <workItem from="1650795179535" duration="17000" />
+      <workItem from="1650795342767" duration="40000" />
+      <workItem from="1650795412984" duration="81000" />
+      <workItem from="1650795511110" duration="259000" />
+      <workItem from="1650795804447" duration="645000" />
+      <workItem from="1650796462475" duration="39000" />
+      <workItem from="1650796524382" duration="10922000" />
+      <workItem from="1650850849822" duration="17967000" />
+      <workItem from="1650894705119" duration="4842000" />
+      <workItem from="1650978666642" duration="10503000" />
+      <workItem from="1651033552291" duration="4055000" />
+      <workItem from="1651038815535" duration="232000" />
+      <workItem from="1651039062192" duration="55000" />
+      <workItem from="1651039121141" duration="7289000" />
+      <workItem from="1651057450885" duration="22139000" />
+      <workItem from="1651147497268" duration="17678000" />
+      <workItem from="1651826902322" duration="678000" />
+      <workItem from="1652433426037" duration="634000" />
+      <workItem from="1652587412115" duration="16000" />
+      <workItem from="1652945191465" duration="1435000" />
+      <workItem from="1653117329257" duration="626000" />
+      <workItem from="1653291762850" duration="31394000" />
+      <workItem from="1653368463899" duration="23713000" />
+      <workItem from="1653451152319" duration="5418000" />
+    </task>
+    <task id="LOCAL-00001" summary="build: gradle dependencies for web app&#10;chore: docker-compose.yml file to run mariadb &amp; redis containers &#10;chore: application profiles&#10;chore: database properties&#10;chore: jpa properties">
+      <created>1649051510882</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1649051510882</updated>
+    </task>
+    <task id="LOCAL-00002" summary="build: set gradle dependencies for web app&#10;chore: add docker-compose.yml file to run mariadb &amp; redis containers &#10;chore: set application profiles&#10;chore: set database properties&#10;chore: set jpa properties&#10;chore: add gitignore file">
+      <created>1649063856294</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1649063856294</updated>
+    </task>
+    <task id="LOCAL-00003" summary="build: set gradle dependencies for web app&#10;chore: add docker compose file to run mariadb &amp; redis containers &#10;chore: set application profiles&#10;chore: set database properties&#10;chore: set jpa properties&#10;chore: add gitignore file&#10;chore: add java google code style">
+      <created>1649065044642</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1649065044642</updated>
+    </task>
+    <task id="LOCAL-00004" summary="feat: add user entity&#10;feat: set jpa auditing configuration&#10;feat: add abstract entity super class">
+      <created>1649075288226</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1649075288226</updated>
+    </task>
+    <task id="LOCAL-00005" summary="feat: add user registration&#10;feat: add user registration request record and add validation">
+      <created>1649250296409</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1649250296409</updated>
+    </task>
+    <task id="LOCAL-00006" summary="feat: add user registration&#10;feat: add user registration request record and add validation&#10;test: add user register test">
+      <created>1649250621729</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1649250621729</updated>
+    </task>
+    <task id="LOCAL-00007" summary="feat: add user registration&#10;feat: add user registration request record and add validation&#10;test: add user register test">
+      <created>1649250639515</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1649250639515</updated>
+    </task>
+    <task id="LOCAL-00008" summary="feat: add user register api&#10;feat: add user registration request record and add validation&#10;test: add user register test">
+      <created>1649252525128</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1649252525128</updated>
+    </task>
+    <task id="LOCAL-00009" summary="feat: add user service implementation&#10;feat: add user jpa repository&#10;feat: add exception for email duplication verification&#10;test: add user register controller test with duplicate email&#10;test: add user register service test">
+      <created>1649466528969</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1649466528969</updated>
+    </task>
+    <task id="LOCAL-00010" summary="test: add verification of mock behavior&#10;style: fix method naming">
+      <created>1649556967752</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1649556967752</updated>
+    </task>
+    <task id="LOCAL-00011" summary="build: add gradle dependencies test container and security crypto&#10;feat: add Encoder interface and wrapper classes such as RawPassword and EncodedPassword&#10;feat: add encoding passwords when user register&#10;test: add test property file&#10;test: add user repository test with test container">
+      <created>1650524048079</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1650524048079</updated>
+    </task>
+    <task id="LOCAL-00012" summary="build: add gradle dependencies test container and security crypto&#10;feat: add Encoder interface and wrapper classes such as RawPassword and EncodedPassword&#10;feat: add encoding passwords when user register&#10;test: add test property file&#10;test: add user repository test with test container">
+      <created>1650524105540</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1650524105540</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ID_ORDER">
+      <list>
+        <option value="Default.Root" />
+        <option value="Default.Author" />
+        <option value="Default.Date" />
+        <option value="Default.Subject" />
+      </list>
+    </option>
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="CUSTOM_BOOLEAN_PROPERTIES">
+                <map>
+                  <entry key="Show.Git.Branches" value="true" />
+                </map>
+              </option>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="feature/project-setting" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="add: gradle project dependancy" />
+    <MESSAGE value="build: gradle dependencies for web app&#10;chore: docker-compose.yml file to run mariadb &amp; redis containers &#10;chore: application profiles&#10;chore: database properties&#10;chore: jpa properties" />
+    <MESSAGE value="build: add gradle dependencies for web app&#10;chore: add docker-compose.yml file to run mariadb &amp; redis containers&#10;chore: set application profiles&#10;chore: set database properties&#10;chore: set jpa properties" />
+    <MESSAGE value="build: set gradle dependencies for web app&#10;chore: add docker-compose.yml file to run mariadb &amp; redis containers &#10;chore: set application profiles&#10;chore: set database properties&#10;chore: set jpa properties&#10;chore: add gitignore file" />
+    <MESSAGE value="build: set gradle dependencies for web app&#10;chore: add docker compose file to run mariadb &amp; redis containers &#10;chore: set application profiles&#10;chore: set database properties&#10;chore: set jpa properties&#10;chore: add gitignore file&#10;chore: add java google code style" />
+    <MESSAGE value="feat: add user entity&#10;feat: set jpa auditing configuration&#10;feat: add abstract entity super class" />
+    <MESSAGE value="feat: add user registration&#10;feat: add user registration request record and add validation" />
+    <MESSAGE value="feat: add user registration&#10;feat: add user registration request record and add validation&#10;test: add user register test" />
+    <MESSAGE value="feat: add user register api&#10;feat: add user registration request record and add validation&#10;test: add user register test" />
+    <MESSAGE value="feat: add user service implementation&#10;feat: add user jpa repository&#10;feat: add exception for email duplication verification&#10;test: add user register controller test with duplicate email&#10;test: add user register service test" />
+    <MESSAGE value="test: add verification of mock behavior&#10;style: fix method naming" />
+    <MESSAGE value="build: add gradle dependencies test container and security crypto&#10;feat: add Encoder interface and wrapper classes such as RawPassword and EncodedPassword&#10;feat: add encoding passwords when user register&#10;test: add test property file&#10;test: add user repository test with test container" />
+    <option name="LAST_COMMIT_MESSAGE" value="build: add gradle dependencies test container and security crypto&#10;feat: add Encoder interface and wrapper classes such as RawPassword and EncodedPassword&#10;feat: add encoding passwords when user register&#10;test: add test property file&#10;test: add user repository test with test container" />
+  </component>
+  <component name="VgoProject">
+    <integration-enabled>false</integration-enabled>
+    <settings-migrated>true</settings-migrated>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework/spring-web/5.3.16/5da5833da20b8f294355e07fd8f60ac5459f1360/spring-web-5.3.16-sources.jar!/org/springframework/http/converter/HttpMessageNotReadableException.java</url>
+          <line>67</line>
+          <option name="timeStamp" value="19" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework/spring-web/5.3.16/5da5833da20b8f294355e07fd8f60ac5459f1360/spring-web-5.3.16-sources.jar!/org/springframework/http/converter/HttpMessageNotReadableException.java</url>
+          <line>79</line>
+          <option name="timeStamp" value="20" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework/spring-context/5.3.16/673766e0d0d6107f383f386a18ecf09f3449d012/spring-context-5.3.16-sources.jar!/org/springframework/context/ApplicationContextAware.java</url>
+          <line>58</line>
+          <option name="timeStamp" value="21" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>jar:///Library/Java/JavaVirtualMachines/oracle-17.0.2/Contents/Home/lib/src.zip!/java.base/java/lang/reflect/Type.java</url>
+          <line>42</line>
+          <option name="timeStamp" value="22" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+    <pin-to-top-manager>
+      <pinned-members>
+        <PinnedItemInfo parentTag="me.jaeyeopme.sns.entity.User" memberName="encodedPassword" />
+        <PinnedItemInfo parentTag="me.jaeyeopme.sns.entity.User" memberName="email" />
+      </pinned-members>
+    </pin-to-top-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/sns$UserServiceTest_RegisterTest_given_duplicateEmail_when_userRegistration_then_throwException.ic" NAME="UserServiceTest$RegisterTest.given_duplicateEmail_when_userRegistration_then_throwException Coverage Results" MODIFIED="1649457634364" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>me.jaeyeopme.sns.service.*</FILTER>
+    </SUITE>
+    <SUITE FILE_PATH="coverage/sns$me_in_sns_test.ic" NAME="me in sns.test Coverage Results" MODIFIED="1651040334372" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+    <SUITE FILE_PATH="coverage/sns$UserServiceTest.ic" NAME="UserServiceTest Coverage Results" MODIFIED="1649464267595" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>me.jaeyeopme.sns.service.*</FILTER>
+    </SUITE>
+    <SUITE FILE_PATH="coverage/sns$All_in_sns_test.ic" NAME="All in sns.test Coverage Results" MODIFIED="1649464317387" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+    <SUITE FILE_PATH="coverage/sns$All_in_sns.ic" NAME="All in sns Coverage Results" MODIFIED="1649460181802" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+    <SUITE FILE_PATH="coverage/sns$UserControllerTest.ic" NAME="UserControllerTest Coverage Results" MODIFIED="1649460384725" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>me.jaeyeopme.sns.controller.*</FILTER>
+    </SUITE>
+    <SUITE FILE_PATH="coverage/sns$UserServiceTest_RegisterTest.ic" NAME="UserServiceTest$RegisterTest Coverage Results" MODIFIED="1649392527375" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>me.jaeyeopme.sns.service.*</FILTER>
+    </SUITE>
+  </component>
+</project>

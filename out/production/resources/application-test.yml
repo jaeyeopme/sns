@@ -1,0 +1,25 @@
+logging:
+  level:
+    org:
+      hibernate:
+        type:
+          descriptor:
+            sql: trace
+
+spring:
+  datasource:
+    url: jdbc:tc:mariadb:10.7.3:///sns
+    username: test
+    password: test
+  test:
+    database:
+      replace: none
+
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+    show-sql: true
+    hibernate:
+      ddl-auto: create

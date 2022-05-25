@@ -1,0 +1,805 @@
+Index: src/main/java/me/jaeyeopme/sns/record/UserRecord.java
+===================================================================
+diff --git a/src/main/java/me/jaeyeopme/sns/record/UserRecord.java b/src/main/java/me/jaeyeopme/sns/record/UserRecord.java
+deleted file mode 100644
+--- a/src/main/java/me/jaeyeopme/sns/record/UserRecord.java	
++++ /dev/null	
+@@ -1,11 +0,0 @@
+-package me.jaeyeopme.sns.record;
+-
+-import javax.validation.Valid;
+-import javax.validation.constraints.Email;
+-import javax.validation.constraints.NotBlank;
+-
+-public record UserRecord(@Email @NotBlank String email,
+-                         @Valid RawPassword rawPassword) {
+-
+-}
+-
+Index: src/main/java/me/jaeyeopme/sns/entity/User.java
+===================================================================
+diff --git a/src/main/java/me/jaeyeopme/sns/entity/User.java b/src/main/java/me/jaeyeopme/sns/entity/User.java
+deleted file mode 100644
+--- a/src/main/java/me/jaeyeopme/sns/entity/User.java	
++++ /dev/null	
+@@ -1,34 +0,0 @@
+-package me.jaeyeopme.sns.entity;
+-
+-import javax.persistence.Column;
+-import javax.persistence.Embedded;
+-import javax.persistence.Entity;
+-import lombok.AccessLevel;
+-import lombok.AllArgsConstructor;
+-import lombok.Builder;
+-import lombok.Getter;
+-import lombok.NoArgsConstructor;
+-import me.jaeyeopme.sns.entity.embeddable.EncodedPassword;
+-
+-@Getter
+-@Builder(access = AccessLevel.PRIVATE)
+-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+-@Entity
+-public class User extends BaseEntity {
+-
+-    @Column(nullable = false, unique = true)
+-    private String email;
+-
+-    @Embedded
+-    private EncodedPassword password;
+-
+-    public static User of(final String email,
+-        final EncodedPassword password) {
+-        return User.builder()
+-            .email(email)
+-            .password(password)
+-            .build();
+-    }
+-
+-}
+Index: src/main/java/me/jaeyeopme/sns/record/RawPassword.java
+===================================================================
+diff --git a/src/main/java/me/jaeyeopme/sns/record/RawPassword.java b/src/main/java/me/jaeyeopme/sns/record/RawPassword.java
+deleted file mode 100644
+--- a/src/main/java/me/jaeyeopme/sns/record/RawPassword.java	
++++ /dev/null	
+@@ -1,7 +0,0 @@
+-package me.jaeyeopme.sns.record;
+-
+-import javax.validation.constraints.NotBlank;
+-
+-public record RawPassword(@NotBlank String password) {
+-
+-}
+Index: src/main/java/me/jaeyeopme/sns/entity/peopleTag/MediaTags.java
+===================================================================
+diff --git a/src/main/java/me/jaeyeopme/sns/entity/peopleTag/MediaTags.java b/src/main/java/me/jaeyeopme/sns/entity/peopleTag/MediaTags.java
+new file mode 100644
+--- /dev/null	
++++ b/src/main/java/me/jaeyeopme/sns/entity/peopleTag/MediaTags.java	
+@@ -0,0 +1,39 @@
++package me.jaeyeopme.sns.entity.peopleTag;
++
++import javax.persistence.CascadeType;
++import javax.persistence.Embedded;
++import javax.persistence.Entity;
++import javax.persistence.FetchType;
++import javax.persistence.GeneratedValue;
++import javax.persistence.GenerationType;
++import javax.persistence.Id;
++import javax.persistence.JoinColumn;
++import javax.persistence.ManyToOne;
++import lombok.AccessLevel;
++import lombok.AllArgsConstructor;
++import lombok.Getter;
++import lombok.NoArgsConstructor;
++import me.jaeyeopme.sns.entity.post.Media;
++
++@Getter
++@AllArgsConstructor(access = AccessLevel.PRIVATE)
++@NoArgsConstructor(access = AccessLevel.PROTECTED)
++@Entity
++public class MediaTags {
++
++    @GeneratedValue(strategy = GenerationType.IDENTITY)
++    @Id
++    private Long id;
++
++    @Embedded
++    private Coordinate coordinate = new Coordinate();
++
++    @ManyToOne(fetch = FetchType.LAZY, optional = false)
++    @JoinColumn(nullable = false, updatable = false)
++    private Media media;
++
++    @ManyToOne(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, optional = false)
++    @JoinColumn(nullable = false, updatable = false)
++    private PeopleTag peopleTag;
++
++}
+Index: src/main/java/me/jaeyeopme/sns/entity/peopleTag/Coordinate.java
+===================================================================
+diff --git a/src/main/java/me/jaeyeopme/sns/entity/peopleTag/Coordinate.java b/src/main/java/me/jaeyeopme/sns/entity/peopleTag/Coordinate.java
+new file mode 100644
+--- /dev/null	
++++ b/src/main/java/me/jaeyeopme/sns/entity/peopleTag/Coordinate.java	
+@@ -0,0 +1,22 @@
++package me.jaeyeopme.sns.entity.peopleTag;
++
++import javax.persistence.Column;
++import javax.persistence.Embeddable;
++import lombok.AccessLevel;
++import lombok.AllArgsConstructor;
++import lombok.Getter;
++import lombok.NoArgsConstructor;
++
++@Getter
++@AllArgsConstructor(access = AccessLevel.PRIVATE)
++@NoArgsConstructor(access = AccessLevel.PROTECTED)
++@Embeddable
++public class Coordinate {
++
++    @Column(nullable = false)
++    private Long x;
++
++    @Column(nullable = false)
++    private Long y;
++
++}
+Index: src/main/resources/application.yml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>server:\n  port: 0\n  error:\n    whitelabel:\n      enabled: false\n\nspring:\n  profiles:\n    active: local\n\n  devtools:\n    add-properties: false\n\n  session:\n    store-type: redis\n\n  jpa:\n    open-in-view: false\n    properties:\n      hibernate:\n        globally_quoted_identifiers: true
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/resources/application.yml b/src/main/resources/application.yml
+--- a/src/main/resources/application.yml	
++++ b/src/main/resources/application.yml	
+@@ -1,5 +1,4 @@
+ server:
+-  port: 0
+   error:
+     whitelabel:
+       enabled: false
+@@ -11,6 +10,14 @@
+   devtools:
+     add-properties: false
+ 
++  mvc:
++    pathmatch:
++      matching-strategy: ant_path_matcher
++
++  jackson:
++    visibility:
++      field: any
++
+   session:
+     store-type: redis
+ 
+Index: src/main/java/me/jaeyeopme/sns/entity/post/Caption.java
+===================================================================
+diff --git a/src/main/java/me/jaeyeopme/sns/entity/post/Caption.java b/src/main/java/me/jaeyeopme/sns/entity/post/Caption.java
+new file mode 100644
+--- /dev/null	
++++ b/src/main/java/me/jaeyeopme/sns/entity/post/Caption.java	
+@@ -0,0 +1,27 @@
++package me.jaeyeopme.sns.entity.post;
++
++import java.util.List;
++import javax.persistence.CascadeType;
++import javax.persistence.Column;
++import javax.persistence.Embeddable;
++import javax.persistence.FetchType;
++import javax.persistence.ManyToMany;
++import lombok.AccessLevel;
++import lombok.AllArgsConstructor;
++import lombok.Getter;
++import lombok.NoArgsConstructor;
++import me.jaeyeopme.sns.entity.peopleTag.PeopleTag;
++
++@Getter
++@AllArgsConstructor(access = AccessLevel.PRIVATE)
++@NoArgsConstructor(access = AccessLevel.PROTECTED)
++@Embeddable
++public class Caption {
++
++    @Column
++    private String text;
++
++    @ManyToMany(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
++    private List<PeopleTag> peopleTags;
++
++}
+Index: src/main/java/me/jaeyeopme/sns/entity/user/Social.java
+===================================================================
+diff --git a/src/main/java/me/jaeyeopme/sns/entity/user/Social.java b/src/main/java/me/jaeyeopme/sns/entity/user/Social.java
+new file mode 100644
+--- /dev/null	
++++ b/src/main/java/me/jaeyeopme/sns/entity/user/Social.java	
+@@ -0,0 +1,26 @@
++package me.jaeyeopme.sns.entity.user;
++
++import java.util.List;
++import javax.persistence.CascadeType;
++import javax.persistence.Embeddable;
++import javax.persistence.FetchType;
++import javax.persistence.OneToMany;
++import lombok.AccessLevel;
++import lombok.AllArgsConstructor;
++import lombok.Getter;
++import lombok.NoArgsConstructor;
++import me.jaeyeopme.sns.entity.activity.Follow;
++
++@Getter
++@AllArgsConstructor(access = AccessLevel.PRIVATE)
++@NoArgsConstructor(access = AccessLevel.PROTECTED)
++@Embeddable
++public class Social {
++
++    @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, mappedBy = "following")
++    private List<Follow> followings;
++
++    @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, mappedBy = "follower")
++    private List<Follow> followers;
++
++}
+Index: src/main/java/me/jaeyeopme/sns/entity/user/Interaction.java
+===================================================================
+diff --git a/src/main/java/me/jaeyeopme/sns/entity/user/Interaction.java b/src/main/java/me/jaeyeopme/sns/entity/user/Interaction.java
+new file mode 100644
+--- /dev/null	
++++ b/src/main/java/me/jaeyeopme/sns/entity/user/Interaction.java	
+@@ -0,0 +1,28 @@
++package me.jaeyeopme.sns.entity.user;
++
++import java.util.List;
++import java.util.Set;
++import javax.persistence.CascadeType;
++import javax.persistence.Embeddable;
++import javax.persistence.FetchType;
++import javax.persistence.OneToMany;
++import lombok.AccessLevel;
++import lombok.AllArgsConstructor;
++import lombok.Getter;
++import lombok.NoArgsConstructor;
++import me.jaeyeopme.sns.entity.interaction.Comment;
++import me.jaeyeopme.sns.entity.interaction.Like;
++
++@Getter
++@AllArgsConstructor(access = AccessLevel.PRIVATE)
++@NoArgsConstructor(access = AccessLevel.PROTECTED)
++@Embeddable
++public class Interaction {
++
++    @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, mappedBy = "owner")
++    private List<Comment> comments;
++
++    @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, mappedBy = "liker")
++    private Set<Like> likes;
++
++}
+Index: src/main/resources/application-local.yml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>logging:\n  level:\n    root: debug\n\nspring:\n  datasource:\n    driver-class-name: org.mariadb.jdbc.Driver\n    url: jdbc:mysql://localhost:3306/sns\n    username: admin\n    password: password\n\n  jpa:\n    database-platform: org.hibernate.dialect.MariaDB106Dialect\n    properties:\n      hibernate:\n        format_sql: true\n    show-sql: true\n    hibernate:\n      ddl-auto: create
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/resources/application-local.yml b/src/main/resources/application-local.yml
+--- a/src/main/resources/application-local.yml	
++++ b/src/main/resources/application-local.yml	
+@@ -1,6 +1,7 @@
+ logging:
+   level:
+-    root: debug
++    sql: debug
++    web: info
+ 
+ spring:
+   datasource:
+Index: src/main/java/me/jaeyeopme/sns/dto/wrapper/RawPassword.java
+===================================================================
+diff --git a/src/main/java/me/jaeyeopme/sns/dto/wrapper/RawPassword.java b/src/main/java/me/jaeyeopme/sns/dto/wrapper/RawPassword.java
+new file mode 100644
+--- /dev/null	
++++ b/src/main/java/me/jaeyeopme/sns/dto/wrapper/RawPassword.java	
+@@ -0,0 +1,19 @@
++package me.jaeyeopme.sns.dto.wrapper;
++
++import javax.validation.constraints.NotBlank;
++import lombok.AccessLevel;
++import lombok.AllArgsConstructor;
++import lombok.EqualsAndHashCode;
++import lombok.Getter;
++import lombok.NoArgsConstructor;
++
++@Getter
++@EqualsAndHashCode
++@AllArgsConstructor(access = AccessLevel.PUBLIC)
++@NoArgsConstructor(access = AccessLevel.PROTECTED)
++public class RawPassword {
++
++    @NotBlank
++    private String password;
++
++}
+Index: src/main/java/me/jaeyeopme/sns/dto/request/UserRequest.java
+===================================================================
+diff --git a/src/main/java/me/jaeyeopme/sns/dto/request/UserRequest.java b/src/main/java/me/jaeyeopme/sns/dto/request/UserRequest.java
+new file mode 100644
+--- /dev/null	
++++ b/src/main/java/me/jaeyeopme/sns/dto/request/UserRequest.java	
+@@ -0,0 +1,29 @@
++package me.jaeyeopme.sns.dto.request;
++
++import com.fasterxml.jackson.annotation.JsonUnwrapped;
++import javax.validation.Valid;
++import javax.validation.constraints.Email;
++import javax.validation.constraints.NotBlank;
++import lombok.AccessLevel;
++import lombok.AllArgsConstructor;
++import lombok.EqualsAndHashCode;
++import lombok.Getter;
++import lombok.NoArgsConstructor;
++import me.jaeyeopme.sns.dto.wrapper.RawPassword;
++
++@Getter
++@EqualsAndHashCode
++@AllArgsConstructor(access = AccessLevel.PUBLIC)
++@NoArgsConstructor(access = AccessLevel.PROTECTED)
++public class UserRequest {
++
++    @Email
++    @NotBlank
++    private String email;
++
++    @JsonUnwrapped
++    @Valid
++    private RawPassword password;
++
++}
++
+Index: src/main/java/me/jaeyeopme/sns/entity/user/User.java
+===================================================================
+diff --git a/src/main/java/me/jaeyeopme/sns/entity/user/User.java b/src/main/java/me/jaeyeopme/sns/entity/user/User.java
+new file mode 100644
+--- /dev/null	
++++ b/src/main/java/me/jaeyeopme/sns/entity/user/User.java	
+@@ -0,0 +1,46 @@
++package me.jaeyeopme.sns.entity.user;
++
++import java.util.List;
++import javax.persistence.CascadeType;
++import javax.persistence.Embedded;
++import javax.persistence.Entity;
++import javax.persistence.FetchType;
++import javax.persistence.OneToMany;
++import lombok.AccessLevel;
++import lombok.AllArgsConstructor;
++import lombok.Builder;
++import lombok.Getter;
++import lombok.NoArgsConstructor;
++import me.jaeyeopme.sns.entity.base.EntityBase;
++import me.jaeyeopme.sns.entity.peopleTag.PeopleTag;
++
++@Getter
++@Builder(access = AccessLevel.PRIVATE)
++@AllArgsConstructor(access = AccessLevel.PRIVATE)
++@NoArgsConstructor(access = AccessLevel.PROTECTED)
++@Entity
++public class User extends EntityBase {
++
++    @Embedded
++    private Account account = new Account();
++
++    @Embedded
++    private Social social = new Social();
++
++    @Embedded
++    private Activity activity = new Activity();
++
++    @Embedded
++    private Interaction interaction = new Interaction();
++
++    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "user")
++    private List<PeopleTag> tags;
++
++    public static User of(final String email,
++        final EncodedPassword encodedPassword) {
++        return User.builder()
++            .account(Account.of(email, encodedPassword))
++            .build();
++    }
++
++}
+Index: src/main/java/me/jaeyeopme/sns/entity/user/Activity.java
+===================================================================
+diff --git a/src/main/java/me/jaeyeopme/sns/entity/user/Activity.java b/src/main/java/me/jaeyeopme/sns/entity/user/Activity.java
+new file mode 100644
+--- /dev/null	
++++ b/src/main/java/me/jaeyeopme/sns/entity/user/Activity.java	
+@@ -0,0 +1,23 @@
++package me.jaeyeopme.sns.entity.user;
++
++import java.util.List;
++import javax.persistence.CascadeType;
++import javax.persistence.Embeddable;
++import javax.persistence.FetchType;
++import javax.persistence.OneToMany;
++import lombok.AccessLevel;
++import lombok.AllArgsConstructor;
++import lombok.Getter;
++import lombok.NoArgsConstructor;
++import me.jaeyeopme.sns.entity.post.Post;
++
++@Getter
++@AllArgsConstructor(access = AccessLevel.PRIVATE)
++@NoArgsConstructor(access = AccessLevel.PROTECTED)
++@Embeddable
++public class Activity {
++
++    @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, mappedBy = "owner")
++    private List<Post> posts;
++
++}
+Index: src/main/java/me/jaeyeopme/sns/config/CorsConfig.java
+===================================================================
+diff --git a/src/main/java/me/jaeyeopme/sns/config/CorsConfig.java b/src/main/java/me/jaeyeopme/sns/config/CorsConfig.java
+new file mode 100644
+--- /dev/null	
++++ b/src/main/java/me/jaeyeopme/sns/config/CorsConfig.java	
+@@ -0,0 +1,21 @@
++package me.jaeyeopme.sns.config;
++
++import org.springframework.context.annotation.Bean;
++import org.springframework.context.annotation.Configuration;
++import org.springframework.web.servlet.config.annotation.CorsRegistry;
++import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
++
++@Configuration
++public class CorsConfig {
++
++    @Bean
++    public WebMvcConfigurer webMvcConfigurer() {
++        return new WebMvcConfigurer() {
++            @Override
++            public void addCorsMappings(final CorsRegistry registry) {
++                registry.addMapping("/**").allowedOrigins("*");
++            }
++        };
++    }
++
++}
+\ No newline at end of file
+Index: src/main/java/me/jaeyeopme/sns/entity/user/Account.java
+===================================================================
+diff --git a/src/main/java/me/jaeyeopme/sns/entity/user/Account.java b/src/main/java/me/jaeyeopme/sns/entity/user/Account.java
+new file mode 100644
+--- /dev/null	
++++ b/src/main/java/me/jaeyeopme/sns/entity/user/Account.java	
+@@ -0,0 +1,28 @@
++package me.jaeyeopme.sns.entity.user;
++
++import javax.persistence.Column;
++import javax.persistence.Embeddable;
++import javax.persistence.Embedded;
++import lombok.AccessLevel;
++import lombok.AllArgsConstructor;
++import lombok.Getter;
++import lombok.NoArgsConstructor;
++
++@Getter
++@AllArgsConstructor(access = AccessLevel.PROTECTED)
++@NoArgsConstructor(access = AccessLevel.PROTECTED)
++@Embeddable
++public class Account {
++
++    @Column(nullable = false, unique = true)
++    private String email;
++
++    @Embedded
++    private EncodedPassword encodedPassword = new EncodedPassword();
++
++    public static Account of(final String email,
++        final EncodedPassword encodedPassword) {
++        return new Account(email, encodedPassword);
++    }
++
++}
+Index: src/main/java/me/jaeyeopme/sns/entity/peopleTag/PeopleTag.java
+===================================================================
+diff --git a/src/main/java/me/jaeyeopme/sns/entity/peopleTag/PeopleTag.java b/src/main/java/me/jaeyeopme/sns/entity/peopleTag/PeopleTag.java
+new file mode 100644
+--- /dev/null	
++++ b/src/main/java/me/jaeyeopme/sns/entity/peopleTag/PeopleTag.java	
+@@ -0,0 +1,52 @@
++package me.jaeyeopme.sns.entity.peopleTag;
++
++import java.time.LocalDateTime;
++import java.util.List;
++import javax.persistence.Column;
++import javax.persistence.Entity;
++import javax.persistence.EntityListeners;
++import javax.persistence.FetchType;
++import javax.persistence.GeneratedValue;
++import javax.persistence.GenerationType;
++import javax.persistence.Id;
++import javax.persistence.ManyToMany;
++import javax.persistence.ManyToOne;
++import javax.persistence.OneToMany;
++import lombok.AccessLevel;
++import lombok.AllArgsConstructor;
++import lombok.Getter;
++import lombok.NoArgsConstructor;
++import me.jaeyeopme.sns.entity.interaction.Comment;
++import me.jaeyeopme.sns.entity.post.Post;
++import me.jaeyeopme.sns.entity.user.User;
++import org.springframework.data.annotation.CreatedDate;
++import org.springframework.data.jpa.domain.support.AuditingEntityListener;
++
++@Getter
++@AllArgsConstructor(access = AccessLevel.PRIVATE)
++@NoArgsConstructor(access = AccessLevel.PROTECTED)
++@EntityListeners(AuditingEntityListener.class)
++@Entity
++public class PeopleTag {
++
++    @GeneratedValue(strategy = GenerationType.IDENTITY)
++    @Id
++    private Long id;
++
++    @CreatedDate
++    @Column(nullable = false, updatable = false)
++    private LocalDateTime taggedAt;
++
++    @ManyToOne(fetch = FetchType.LAZY, optional = false)
++    private User user;
++
++    @OneToMany(fetch = FetchType.LAZY, mappedBy = "peopleTag")
++    private List<MediaTags> medias;
++
++    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "caption.peopleTags")
++    private List<Post> posts;
++
++    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "content.peopleTags")
++    private List<Comment> comments;
++
++}
+Index: gradle/wrapper/gradle-wrapper.properties
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>distributionBase=GRADLE_USER_HOME\ndistributionPath=wrapper/dists\ndistributionUrl=https\\://services.gradle.org/distributions/gradle-7.4.1-bin.zip\nzipStoreBase=GRADLE_USER_HOME\nzipStorePath=wrapper/dists\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>NATIVE_TO_ASCII_UTF-8
+===================================================================
+diff --git a/gradle/wrapper/gradle-wrapper.properties b/gradle/wrapper/gradle-wrapper.properties
+--- a/gradle/wrapper/gradle-wrapper.properties	
++++ b/gradle/wrapper/gradle-wrapper.properties	
+@@ -1,5 +1,5 @@
+ distributionBase=GRADLE_USER_HOME
+ distributionPath=wrapper/dists
+-distributionUrl=https\://services.gradle.org/distributions/gradle-7.4.1-bin.zip
++distributionUrl=https\://services.gradle.org/distributions/gradle-7.4.2-bin.zip
+ zipStoreBase=GRADLE_USER_HOME
+ zipStorePath=wrapper/dists
+Index: src/main/java/me/jaeyeopme/sns/entity/activity/Follow.java
+===================================================================
+diff --git a/src/main/java/me/jaeyeopme/sns/entity/activity/Follow.java b/src/main/java/me/jaeyeopme/sns/entity/activity/Follow.java
+new file mode 100644
+--- /dev/null	
++++ b/src/main/java/me/jaeyeopme/sns/entity/activity/Follow.java	
+@@ -0,0 +1,44 @@
++package me.jaeyeopme.sns.entity.activity;
++
++import java.time.LocalDateTime;
++import javax.persistence.Column;
++import javax.persistence.Entity;
++import javax.persistence.EntityListeners;
++import javax.persistence.FetchType;
++import javax.persistence.GeneratedValue;
++import javax.persistence.GenerationType;
++import javax.persistence.Id;
++import javax.persistence.JoinColumn;
++import javax.persistence.ManyToOne;
++import lombok.AccessLevel;
++import lombok.AllArgsConstructor;
++import lombok.Getter;
++import lombok.NoArgsConstructor;
++import me.jaeyeopme.sns.entity.user.User;
++import org.springframework.data.annotation.CreatedDate;
++import org.springframework.data.jpa.domain.support.AuditingEntityListener;
++
++@Getter
++@AllArgsConstructor(access = AccessLevel.PRIVATE)
++@NoArgsConstructor(access = AccessLevel.PROTECTED)
++@EntityListeners(AuditingEntityListener.class)
++@Entity
++public class Follow {
++
++    @GeneratedValue(strategy = GenerationType.IDENTITY)
++    @Id
++    private Long id;
++
++    @CreatedDate
++    @Column(nullable = false, updatable = false)
++    private LocalDateTime followedAt;
++
++    @ManyToOne(fetch = FetchType.LAZY, optional = false)
++    @JoinColumn(nullable = false, updatable = false)
++    private User following;
++
++    @ManyToOne(fetch = FetchType.LAZY, optional = false)
++    @JoinColumn(nullable = false, updatable = false)
++    private User follower;
++
++}
+Index: src/main/java/me/jaeyeopme/sns/entity/interaction/Content.java
+===================================================================
+diff --git a/src/main/java/me/jaeyeopme/sns/entity/interaction/Content.java b/src/main/java/me/jaeyeopme/sns/entity/interaction/Content.java
+new file mode 100644
+--- /dev/null	
++++ b/src/main/java/me/jaeyeopme/sns/entity/interaction/Content.java	
+@@ -0,0 +1,27 @@
++package me.jaeyeopme.sns.entity.interaction;
++
++import java.util.List;
++import javax.persistence.CascadeType;
++import javax.persistence.Column;
++import javax.persistence.Embeddable;
++import javax.persistence.FetchType;
++import javax.persistence.ManyToMany;
++import lombok.AccessLevel;
++import lombok.AllArgsConstructor;
++import lombok.Getter;
++import lombok.NoArgsConstructor;
++import me.jaeyeopme.sns.entity.peopleTag.PeopleTag;
++
++@Getter
++@AllArgsConstructor(access = AccessLevel.PRIVATE)
++@NoArgsConstructor(access = AccessLevel.PROTECTED)
++@Embeddable
++public class Content {
++
++    @Column
++    private String text;
++
++    @ManyToMany(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
++    private List<PeopleTag> peopleTags;
++
++}
+Index: src/main/java/me/jaeyeopme/sns/entity/interaction/Like.java
+===================================================================
+diff --git a/src/main/java/me/jaeyeopme/sns/entity/interaction/Like.java b/src/main/java/me/jaeyeopme/sns/entity/interaction/Like.java
+new file mode 100644
+--- /dev/null	
++++ b/src/main/java/me/jaeyeopme/sns/entity/interaction/Like.java	
+@@ -0,0 +1,49 @@
++package me.jaeyeopme.sns.entity.interaction;
++
++import java.time.LocalDateTime;
++import java.util.Set;
++import javax.persistence.Column;
++import javax.persistence.Entity;
++import javax.persistence.EntityListeners;
++import javax.persistence.FetchType;
++import javax.persistence.GeneratedValue;
++import javax.persistence.GenerationType;
++import javax.persistence.Id;
++import javax.persistence.JoinColumn;
++import javax.persistence.ManyToMany;
++import javax.persistence.ManyToOne;
++import lombok.AccessLevel;
++import lombok.AllArgsConstructor;
++import lombok.Getter;
++import lombok.NoArgsConstructor;
++import me.jaeyeopme.sns.entity.post.Post;
++import me.jaeyeopme.sns.entity.user.User;
++import org.springframework.data.annotation.CreatedDate;
++import org.springframework.data.jpa.domain.support.AuditingEntityListener;
++
++@Getter
++@AllArgsConstructor(access = AccessLevel.PRIVATE)
++@NoArgsConstructor(access = AccessLevel.PROTECTED)
++@EntityListeners(AuditingEntityListener.class)
++@Entity
++public class Like {
++
++    @GeneratedValue(strategy = GenerationType.IDENTITY)
++    @Id
++    private Long id;
++
++    @Column(nullable = false, updatable = false)
++    @CreatedDate
++    private LocalDateTime likedAt;
++
++    @ManyToOne(fetch = FetchType.LAZY, optional = false)
++    @JoinColumn(nullable = false, updatable = false)
++    private User liker;
++
++    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "likes")
++    private Set<Post> posts;
++
++    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "likes")
++    private Set<Comment> comments;
++
++}
+\ No newline at end of file
+Index: src/main/java/me/jaeyeopme/sns/entity/hashTag/HashTag.java
+===================================================================
+diff --git a/src/main/java/me/jaeyeopme/sns/entity/hashTag/HashTag.java b/src/main/java/me/jaeyeopme/sns/entity/hashTag/HashTag.java
+new file mode 100644
+--- /dev/null	
++++ b/src/main/java/me/jaeyeopme/sns/entity/hashTag/HashTag.java	
+@@ -0,0 +1,46 @@
++package me.jaeyeopme.sns.entity.hashTag;
++
++import java.time.LocalDateTime;
++import java.util.List;
++import javax.persistence.Column;
++import javax.persistence.Entity;
++import javax.persistence.EntityListeners;
++import javax.persistence.FetchType;
++import javax.persistence.GeneratedValue;
++import javax.persistence.GenerationType;
++import javax.persistence.Id;
++import javax.persistence.ManyToMany;
++import lombok.AccessLevel;
++import lombok.AllArgsConstructor;
++import lombok.Getter;
++import lombok.NoArgsConstructor;
++import me.jaeyeopme.sns.entity.interaction.Comment;
++import me.jaeyeopme.sns.entity.post.Post;
++import org.springframework.data.annotation.CreatedDate;
++import org.springframework.data.jpa.domain.support.AuditingEntityListener;
++
++@Getter
++@AllArgsConstructor(access = AccessLevel.PRIVATE)
++@NoArgsConstructor(access = AccessLevel.PROTECTED)
++@EntityListeners(AuditingEntityListener.class)
++@Entity
++public class HashTag {
++
++    @GeneratedValue(strategy = GenerationType.IDENTITY)
++    @Id
++    private Long id;
++
++    @Column(nullable = false, updatable = false)
++    private String name;
++
++    @CreatedDate
++    @Column(nullable = false, updatable = false)
++    private LocalDateTime createdAt;
++
++    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "hashTags")
++    private List<Post> posts;
++
++    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "hashTags")
++    private List<Comment> comments;
++
++}
+Index: docker/docker-compose.yml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>version: \"3.8\"\n\nservices:\n  database:\n    image: mariadb:10.7.3\n    container_name: mariadb\n    environment:\n      MYSQL_HOST: localhost\n      MYSQL_PORT: 3306\n      MYSQL_ROOT_PASSWORD: password\n      MYSQL_DATABASE: sns\n      MYSQL_USER: admin\n      MYSQL_PASSWORD: password\n      TZ: UTC\n    volumes:\n      - mariadb:/var/lib/mysql\n    restart: always\n    ports:\n      - \"3306:3306\"\n    command:\n      - --character-set-server=utf8mb4\n      - --collation-server=utf8mb4_unicode_ci\n\n  cache:\n    image: redis:6.2.6-alpine\n    container_name: redis\n    environment:\n      TZ: UTC\n    volumes:\n      - redis:/data\n    restart: always\n    ports:\n      - \"6379:6379\"\n    command:\n      - --requirepass password\n\nvolumes:\n  mariadb:\n  redis:\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/docker/docker-compose.yml b/docker/docker-compose.yml
+--- a/docker/docker-compose.yml	
++++ b/docker/docker-compose.yml	
+@@ -34,6 +34,14 @@
+     command:
+       - --requirepass password
+ 
++  document:
++    image: swaggerapi/swagger-ui
++    container_name: swagger
++    environment:
++      URL: http://localhost:8080/docs/openapi3.yml
++    ports:
++      - "80:8080"
++
+ volumes:
+   mariadb:
+   redis:

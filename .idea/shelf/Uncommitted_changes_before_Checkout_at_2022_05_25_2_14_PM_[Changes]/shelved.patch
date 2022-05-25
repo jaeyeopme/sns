@@ -1,0 +1,641 @@
+Index: build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>plugins {\n    id 'org.springframework.boot' version '2.6.4'\n    id 'io.spring.dependency-management' version '1.0.11.RELEASE'\n    id 'org.asciidoctor.convert' version '1.5.8'\n    id 'java'\n}\n\ngroup = 'me.jaeyeopme'\nversion = '0.0.1'\nsourceCompatibility = '17'\n\nconfigurations {\n    compileOnly {\n        extendsFrom annotationProcessor\n    }\n}\n\nrepositories {\n    mavenCentral()\n}\n\next {\n    set('snippetsDir', file(\"build/generated-snippets\"))\n\n    set('spring', \"org.springframework\")\n    set('boot', \"${spring}.boot\")\n    set('starter', \"spring-boot-starter\")\n\n    set('lombok', \"org.projectlombok:lombok\")\n    set('h2', \"com.h2database:h2\")\n    set('maria', \"org.mariadb.jdbc:mariadb-java-client\")\n    set('testContainer', \"org.testcontainers\")\n}\n\ndependencies {\n\n    implementation \"${boot}:${starter}-web\"\n    implementation \"${spring}.security:spring-security-crypto\"\n    implementation \"${boot}:${starter}-data-jpa\"\n    implementation \"${boot}:${starter}-validation\"\n\n    developmentOnly \"${boot}:spring-boot-devtools\"\n\n    runtimeOnly \"${h2}\"\n    runtimeOnly \"${maria}\"\n\n    compileOnly \"${lombok}\"\n    annotationProcessor \"${lombok}\"\n\n    testImplementation \"${boot}:${starter}-test\"\n    testImplementation \"${spring}.restdocs:spring-restdocs-mockmvc\"\n\n    testImplementation \"org.testcontainers:junit-jupiter:1.16.3\"\n    testImplementation \"${testContainer}:mariadb:1.16.3\"\n\n    testCompileOnly \"${lombok}\"\n    testAnnotationProcessor \"${lombok}\"\n\n}\n\ntasks.named('test') {\n    outputs.dir snippetsDir\n    useJUnitPlatform()\n}\n\ntasks.named('asciidoctor') {\n    inputs.dir snippetsDir\n    dependsOn test\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/build.gradle b/build.gradle
+--- a/build.gradle	
++++ b/build.gradle	
+@@ -1,13 +1,13 @@
+ plugins {
+     id 'org.springframework.boot' version '2.6.4'
+     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+-    id 'org.asciidoctor.convert' version '1.5.8'
++    id 'com.epages.restdocs-api-spec' version '0.16.0'
+     id 'java'
+ }
+ 
+ group = 'me.jaeyeopme'
+ version = '0.0.1'
+-sourceCompatibility = '17'
++sourceCompatibility = JavaVersion.VERSION_17
+ 
+ configurations {
+     compileOnly {
+@@ -20,25 +20,25 @@
+ }
+ 
+ ext {
+-    set('snippetsDir', file("build/generated-snippets"))
+-
+     set('spring', "org.springframework")
+     set('boot', "${spring}.boot")
+     set('starter', "spring-boot-starter")
+ 
+-    set('lombok', "org.projectlombok:lombok")
+     set('h2', "com.h2database:h2")
+     set('maria', "org.mariadb.jdbc:mariadb-java-client")
++
++    set('lombok', "org.projectlombok:lombok")
++
+     set('testContainer', "org.testcontainers")
++    set('testContainerVersion', "1.16.3")
+ }
+-
+ dependencies {
+ 
+     implementation "${boot}:${starter}-web"
+-    implementation "${spring}.security:spring-security-crypto"
+     implementation "${boot}:${starter}-data-jpa"
+     implementation "${boot}:${starter}-validation"
+ 
++    implementation "${spring}.security:spring-security-crypto"
+     developmentOnly "${boot}:spring-boot-devtools"
+ 
+     runtimeOnly "${h2}"
+@@ -48,22 +48,45 @@
+     annotationProcessor "${lombok}"
+ 
+     testImplementation "${boot}:${starter}-test"
+-    testImplementation "${spring}.restdocs:spring-restdocs-mockmvc"
++    testImplementation 'com.epages:restdocs-api-spec-mockmvc:0.16.2'
+ 
+-    testImplementation "org.testcontainers:junit-jupiter:1.16.3"
+-    testImplementation "${testContainer}:mariadb:1.16.3"
++    testImplementation "${testContainer}:junit-jupiter:${testContainerVersion}"
++    testImplementation "${testContainer}:mariadb:${testContainerVersion}"
+ 
+-    testCompileOnly "${lombok}"
+     testAnnotationProcessor "${lombok}"
+ 
+ }
+ 
+-tasks.named('test') {
+-    outputs.dir snippetsDir
+-    useJUnitPlatform()
++
++openapi3 {
++
++    title 'SNS API'
++    description 'SNS project'
++    version '0.0.1'
++    format 'yml'
++
++}
++
++tasks.create('copyOpenapi3') {
++
++    dependsOn 'openapi3'
++
++    copy {
++        from "build/api-spec"
++        include "*.yml"
++        into "build/resources/static/docs"
++    }
++
+ }
+ 
+-tasks.named('asciidoctor') {
+-    inputs.dir snippetsDir
+-    dependsOn test
+-}
++tasks.named('bootJar') {
++
++    dependsOn 'copyOpenapi3'
++
++    copy {
++        from "build/api-spec"
++        include "*.yml"
++        into "src/main/resources/static/docs"
++    }
++
++}
+\ No newline at end of file
+Index: lombok.config
+===================================================================
+diff --git a/lombok.config b/lombok.config
+new file mode 100644
+--- /dev/null	
++++ b/lombok.config	
+@@ -0,0 +1,1 @@
++lombok.accessors.fluent=true
+\ No newline at end of file
+Index: src/main/java/me/jaeyeopme/sns/entity/interaction/Comment.java
+===================================================================
+diff --git a/src/main/java/me/jaeyeopme/sns/entity/interaction/Comment.java b/src/main/java/me/jaeyeopme/sns/entity/interaction/Comment.java
+new file mode 100644
+--- /dev/null	
++++ b/src/main/java/me/jaeyeopme/sns/entity/interaction/Comment.java	
+@@ -0,0 +1,44 @@
++package me.jaeyeopme.sns.entity.interaction;
++
++import java.util.List;
++import java.util.Set;
++import javax.persistence.CascadeType;
++import javax.persistence.Embedded;
++import javax.persistence.Entity;
++import javax.persistence.FetchType;
++import javax.persistence.JoinColumn;
++import javax.persistence.ManyToMany;
++import javax.persistence.ManyToOne;
++import lombok.AccessLevel;
++import lombok.AllArgsConstructor;
++import lombok.Getter;
++import lombok.NoArgsConstructor;
++import me.jaeyeopme.sns.entity.base.EntityBase;
++import me.jaeyeopme.sns.entity.hashTag.HashTag;
++import me.jaeyeopme.sns.entity.post.Post;
++import me.jaeyeopme.sns.entity.user.User;
++
++@Getter
++@AllArgsConstructor(access = AccessLevel.PRIVATE)
++@NoArgsConstructor(access = AccessLevel.PROTECTED)
++@Entity
++public class Comment extends EntityBase {
++
++    @Embedded
++    private Content content = new Content();
++
++    @ManyToMany(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
++    private List<HashTag> hashTags;
++
++    @ManyToOne(fetch = FetchType.LAZY, optional = false)
++    @JoinColumn(nullable = false, updatable = false)
++    private User owner;
++
++    @ManyToOne(fetch = FetchType.LAZY, optional = false)
++    @JoinColumn(nullable = false, updatable = false)
++    private Post post;
++
++    @ManyToMany(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
++    private Set<Like> likes;
++
++}
+\ No newline at end of file
+Index: src/main/java/me/jaeyeopme/sns/entity/post/Media.java
+===================================================================
+diff --git a/src/main/java/me/jaeyeopme/sns/entity/post/Media.java b/src/main/java/me/jaeyeopme/sns/entity/post/Media.java
+new file mode 100644
+--- /dev/null	
++++ b/src/main/java/me/jaeyeopme/sns/entity/post/Media.java	
+@@ -0,0 +1,42 @@
++package me.jaeyeopme.sns.entity.post;
++
++import java.util.Set;
++import javax.persistence.CascadeType;
++import javax.persistence.Column;
++import javax.persistence.Entity;
++import javax.persistence.FetchType;
++import javax.persistence.GeneratedValue;
++import javax.persistence.GenerationType;
++import javax.persistence.Id;
++import javax.persistence.JoinColumn;
++import javax.persistence.ManyToOne;
++import javax.persistence.OneToMany;
++import lombok.AccessLevel;
++import lombok.AllArgsConstructor;
++import lombok.Builder;
++import lombok.Getter;
++import lombok.NoArgsConstructor;
++import me.jaeyeopme.sns.entity.peopleTag.MediaTags;
++
++@Getter
++@Builder(access = AccessLevel.PRIVATE)
++@AllArgsConstructor(access = AccessLevel.PRIVATE)
++@NoArgsConstructor(access = AccessLevel.PROTECTED)
++@Entity
++public class Media {
++
++    @GeneratedValue(strategy = GenerationType.IDENTITY)
++    @Id
++    private Long id;
++
++    @Column(nullable = false)
++    private String url;
++
++    @ManyToOne(fetch = FetchType.LAZY, optional = false)
++    @JoinColumn(nullable = false, updatable = false)
++    private Post post;
++
++    @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, mappedBy = "media")
++    private Set<MediaTags> mediaTags;
++
++}
+Index: src/test/java/me/jaeyeopme/sns/service/UserServiceTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package me.jaeyeopme.sns.service;\n\nimport static org.assertj.core.api.Assertions.assertThat;\nimport static org.junit.jupiter.api.Assertions.assertThrows;\nimport static org.mockito.ArgumentMatchers.any;\nimport static org.mockito.BDDMockito.given;\nimport static org.mockito.BDDMockito.then;\nimport static org.mockito.Mockito.never;\nimport static org.mockito.Mockito.only;\n\nimport me.jaeyeopme.sns.config.Encoder;\nimport me.jaeyeopme.sns.entity.User;\nimport me.jaeyeopme.sns.entity.embeddable.EncodedPassword;\nimport me.jaeyeopme.sns.exception.DuplicatedEmailException;\nimport me.jaeyeopme.sns.record.RawPassword;\nimport me.jaeyeopme.sns.record.UserRecord;\nimport me.jaeyeopme.sns.repository.UserRepository;\nimport org.junit.jupiter.api.DisplayName;\nimport org.junit.jupiter.api.Nested;\nimport org.junit.jupiter.api.Test;\nimport org.junit.jupiter.api.extension.ExtendWith;\nimport org.junit.jupiter.api.function.Executable;\nimport org.mockito.InjectMocks;\nimport org.mockito.Mock;\nimport org.mockito.junit.jupiter.MockitoExtension;\n\n@ExtendWith(MockitoExtension.class)\nclass UserServiceTest {\n\n    @InjectMocks\n    private GeneralUserService userService;\n\n    @Mock\n    private UserRepository userRepository;\n\n    @Mock\n    private Encoder encoder;\n\n    @DisplayName(\"when user registration\")\n    @Nested\n    class RegisterTest {\n\n        @DisplayName(\"given duplicated email then throw duplicated exception\")\n        @Test\n        void given_duplicateEmail_when_userRegistration_then_throwException() {\n            // Given\n            final var email = \"email@email.com\";\n            final var request = new UserRecord(email, new RawPassword(\"rawPassword\"));\n\n            given(userRepository.existsByEmail(email)).willReturn(Boolean.TRUE);\n\n            // When\n            final Executable executable = () -> userService.register(request);\n\n            // Then\n            assertThrows(DuplicatedEmailException.class, executable);\n\n            then(userRepository).should(only()).existsByEmail(email);\n            then(userRepository).should(never()).save(any(User.class));\n        }\n\n        @DisplayName(\"given not duplicated email then return user\")\n        @Test\n        void given_notDuplicatedEmail_when_userRegistration_then_returnEntity() {\n            // Given\n            final var email = \"email@email.com\";\n            final var rawPassword = new RawPassword(\"rawPassword\");\n            final var request = new UserRecord(email, rawPassword);\n            final var encodedPassword = EncodedPassword.from(\"encodedPassword\");\n            final var expected = User.of(request.email(),\n                EncodedPassword.from(request.rawPassword().password()));\n\n            given(userRepository.existsByEmail(email)).willReturn(Boolean.FALSE);\n            given(encoder.encode(rawPassword)).willReturn(encodedPassword);\n            given(userRepository.save(any(User.class))).willReturn(expected);\n\n            // When\n            final var actual = userService.register(request);\n\n            //Then\n            assertThat(actual).isEqualTo(expected);\n\n            then(userRepository).should().existsByEmail(email);\n            then(encoder).should().encode(any());\n            then(userRepository).should().save(any(User.class));\n        }\n\n    }\n}
+===================================================================
+diff --git a/src/test/java/me/jaeyeopme/sns/service/UserServiceTest.java b/src/test/java/me/jaeyeopme/sns/service/UserServiceTest.java
+--- a/src/test/java/me/jaeyeopme/sns/service/UserServiceTest.java	
++++ b/src/test/java/me/jaeyeopme/sns/service/UserServiceTest.java	
+@@ -9,11 +9,11 @@
+ import static org.mockito.Mockito.only;
+ 
+ import me.jaeyeopme.sns.config.Encoder;
+-import me.jaeyeopme.sns.entity.User;
+-import me.jaeyeopme.sns.entity.embeddable.EncodedPassword;
++import me.jaeyeopme.sns.dto.request.UserRequest;
++import me.jaeyeopme.sns.dto.wrapper.RawPassword;
++import me.jaeyeopme.sns.entity.user.EncodedPassword;
++import me.jaeyeopme.sns.entity.user.User;
+ import me.jaeyeopme.sns.exception.DuplicatedEmailException;
+-import me.jaeyeopme.sns.record.RawPassword;
+-import me.jaeyeopme.sns.record.UserRecord;
+ import me.jaeyeopme.sns.repository.UserRepository;
+ import org.junit.jupiter.api.DisplayName;
+ import org.junit.jupiter.api.Nested;
+@@ -45,9 +45,9 @@
+         void given_duplicateEmail_when_userRegistration_then_throwException() {
+             // Given
+             final var email = "email@email.com";
+-            final var request = new UserRecord(email, new RawPassword("rawPassword"));
++            final var request = new UserRequest(email, new RawPassword("rawPassword"));
+ 
+-            given(userRepository.existsByEmail(email)).willReturn(Boolean.TRUE);
++            given(userRepository.existsByAccountEmail(email)).willReturn(Boolean.TRUE);
+ 
+             // When
+             final Executable executable = () -> userService.register(request);
+@@ -55,7 +55,7 @@
+             // Then
+             assertThrows(DuplicatedEmailException.class, executable);
+ 
+-            then(userRepository).should(only()).existsByEmail(email);
++            then(userRepository).should(only()).existsByAccountEmail(email);
+             then(userRepository).should(never()).save(any(User.class));
+         }
+ 
+@@ -65,12 +65,12 @@
+             // Given
+             final var email = "email@email.com";
+             final var rawPassword = new RawPassword("rawPassword");
+-            final var request = new UserRecord(email, rawPassword);
+-            final var encodedPassword = EncodedPassword.from("encodedPassword");
++            final var request = new UserRequest(email, rawPassword);
++            final var encodedPassword = EncodedPassword.from(rawPassword.password());
+             final var expected = User.of(request.email(),
+-                EncodedPassword.from(request.rawPassword().password()));
++                EncodedPassword.from(request.password().password()));
+ 
+-            given(userRepository.existsByEmail(email)).willReturn(Boolean.FALSE);
++            given(userRepository.existsByAccountEmail(email)).willReturn(Boolean.FALSE);
+             given(encoder.encode(rawPassword)).willReturn(encodedPassword);
+             given(userRepository.save(any(User.class))).willReturn(expected);
+ 
+@@ -80,7 +80,7 @@
+             //Then
+             assertThat(actual).isEqualTo(expected);
+ 
+-            then(userRepository).should().existsByEmail(email);
++            then(userRepository).should().existsByAccountEmail(email);
+             then(encoder).should().encode(any());
+             then(userRepository).should().save(any(User.class));
+         }
+Index: src/main/java/me/jaeyeopme/sns/entity/embeddable/EncodedPassword.java
+===================================================================
+diff --git a/src/main/java/me/jaeyeopme/sns/entity/embeddable/EncodedPassword.java b/src/main/java/me/jaeyeopme/sns/entity/user/EncodedPassword.java
+rename from src/main/java/me/jaeyeopme/sns/entity/embeddable/EncodedPassword.java
+rename to src/main/java/me/jaeyeopme/sns/entity/user/EncodedPassword.java
+--- a/src/main/java/me/jaeyeopme/sns/entity/embeddable/EncodedPassword.java	
++++ b/src/main/java/me/jaeyeopme/sns/entity/user/EncodedPassword.java	
+@@ -1,4 +1,4 @@
+-package me.jaeyeopme.sns.entity.embeddable;
++package me.jaeyeopme.sns.entity.user;
+ 
+ import javax.persistence.Column;
+ import javax.persistence.Embeddable;
+Index: src/main/java/me/jaeyeopme/sns/config/BCryptEncoder.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package me.jaeyeopme.sns.config;\n\nimport me.jaeyeopme.sns.entity.embeddable.EncodedPassword;\nimport me.jaeyeopme.sns.record.RawPassword;\nimport org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;\n\npublic class BCryptEncoder implements Encoder {\n\n    private final BCryptPasswordEncoder encoder;\n\n    public BCryptEncoder() {\n        this.encoder = new BCryptPasswordEncoder();\n    }\n\n    @Override\n    public EncodedPassword encode(final RawPassword rawPassword) {\n        return EncodedPassword.from(encoder.encode(rawPassword.password()));\n    }\n\n    @Override\n    public boolean matches(final CharSequence rawPassword,\n        final EncodedPassword encodedPassword) {\n        return encoder.matches(rawPassword, encodedPassword.getPassword());\n    }\n\n}\n
+===================================================================
+diff --git a/src/main/java/me/jaeyeopme/sns/config/BCryptEncoder.java b/src/main/java/me/jaeyeopme/sns/config/BCryptEncoder.java
+--- a/src/main/java/me/jaeyeopme/sns/config/BCryptEncoder.java	
++++ b/src/main/java/me/jaeyeopme/sns/config/BCryptEncoder.java	
+@@ -1,7 +1,7 @@
+ package me.jaeyeopme.sns.config;
+ 
+-import me.jaeyeopme.sns.entity.embeddable.EncodedPassword;
+-import me.jaeyeopme.sns.record.RawPassword;
++import me.jaeyeopme.sns.dto.wrapper.RawPassword;
++import me.jaeyeopme.sns.entity.user.EncodedPassword;
+ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+ 
+ public class BCryptEncoder implements Encoder {
+@@ -20,7 +20,7 @@
+     @Override
+     public boolean matches(final CharSequence rawPassword,
+         final EncodedPassword encodedPassword) {
+-        return encoder.matches(rawPassword, encodedPassword.getPassword());
++        return encoder.matches(rawPassword, encodedPassword.password());
+     }
+ 
+ }
+Index: src/main/java/me/jaeyeopme/sns/config/Encoder.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package me.jaeyeopme.sns.config;\n\nimport me.jaeyeopme.sns.entity.embeddable.EncodedPassword;\nimport me.jaeyeopme.sns.record.RawPassword;\n\npublic interface Encoder {\n\n    EncodedPassword encode(RawPassword rawPassword);\n\n    boolean matches(CharSequence rawPassword, EncodedPassword encodedPassword);\n\n}\n
+===================================================================
+diff --git a/src/main/java/me/jaeyeopme/sns/config/Encoder.java b/src/main/java/me/jaeyeopme/sns/config/Encoder.java
+--- a/src/main/java/me/jaeyeopme/sns/config/Encoder.java	
++++ b/src/main/java/me/jaeyeopme/sns/config/Encoder.java	
+@@ -1,7 +1,7 @@
+ package me.jaeyeopme.sns.config;
+ 
+-import me.jaeyeopme.sns.entity.embeddable.EncodedPassword;
+-import me.jaeyeopme.sns.record.RawPassword;
++import me.jaeyeopme.sns.dto.wrapper.RawPassword;
++import me.jaeyeopme.sns.entity.user.EncodedPassword;
+ 
+ public interface Encoder {
+ 
+Index: src/main/java/me/jaeyeopme/sns/repository/UserRepository.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package me.jaeyeopme.sns.repository;\n\nimport me.jaeyeopme.sns.entity.User;\nimport org.springframework.data.jpa.repository.JpaRepository;\n\npublic interface UserRepository extends JpaRepository<User, Long> {\n\n    boolean existsByEmail(String email);\n\n}\n
+===================================================================
+diff --git a/src/main/java/me/jaeyeopme/sns/repository/UserRepository.java b/src/main/java/me/jaeyeopme/sns/repository/UserRepository.java
+--- a/src/main/java/me/jaeyeopme/sns/repository/UserRepository.java	
++++ b/src/main/java/me/jaeyeopme/sns/repository/UserRepository.java	
+@@ -1,10 +1,10 @@
+ package me.jaeyeopme.sns.repository;
+ 
+-import me.jaeyeopme.sns.entity.User;
++import me.jaeyeopme.sns.entity.user.User;
+ import org.springframework.data.jpa.repository.JpaRepository;
+ 
+ public interface UserRepository extends JpaRepository<User, Long> {
+ 
+-    boolean existsByEmail(String email);
++    boolean existsByAccountEmail(String email);
+ 
+ }
+Index: src/test/java/me/jaeyeopme/sns/repository/UserRepositoryTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package me.jaeyeopme.sns.repository;\n\nimport static org.assertj.core.api.Assertions.assertThat;\n\nimport me.jaeyeopme.sns.config.JpaAuditingConfig;\nimport me.jaeyeopme.sns.entity.User;\nimport me.jaeyeopme.sns.entity.embeddable.EncodedPassword;\nimport me.jaeyeopme.sns.record.RawPassword;\nimport me.jaeyeopme.sns.record.UserRecord;\nimport org.junit.jupiter.api.Test;\nimport org.springframework.beans.factory.annotation.Autowired;\nimport org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;\nimport org.springframework.context.annotation.Import;\nimport org.springframework.test.context.ActiveProfiles;\n\n@ActiveProfiles(\"test\")\n@Import(JpaAuditingConfig.class)\n@DataJpaTest\nclass UserRepositoryTest {\n\n    @Autowired\n    private UserRepository userRepository;\n\n    @Test\n    void existsByEmail() {\n        final var expectedEmail = \"email@email.com\";\n\n        final var request = new UserRecord(expectedEmail, new RawPassword(\"password\"));\n        final var user = User.of(expectedEmail,\n            EncodedPassword.from(request.rawPassword().password()));\n\n        userRepository.save(user);\n\n        assertThat(userRepository.existsByEmail(expectedEmail)).isTrue();\n    }\n\n}
+===================================================================
+diff --git a/src/test/java/me/jaeyeopme/sns/repository/UserRepositoryTest.java b/src/test/java/me/jaeyeopme/sns/repository/UserRepositoryTest.java
+--- a/src/test/java/me/jaeyeopme/sns/repository/UserRepositoryTest.java	
++++ b/src/test/java/me/jaeyeopme/sns/repository/UserRepositoryTest.java	
+@@ -3,10 +3,10 @@
+ import static org.assertj.core.api.Assertions.assertThat;
+ 
+ import me.jaeyeopme.sns.config.JpaAuditingConfig;
+-import me.jaeyeopme.sns.entity.User;
+-import me.jaeyeopme.sns.entity.embeddable.EncodedPassword;
+-import me.jaeyeopme.sns.record.RawPassword;
+-import me.jaeyeopme.sns.record.UserRecord;
++import me.jaeyeopme.sns.dto.request.UserRequest;
++import me.jaeyeopme.sns.dto.wrapper.RawPassword;
++import me.jaeyeopme.sns.entity.user.EncodedPassword;
++import me.jaeyeopme.sns.entity.user.User;
+ import org.junit.jupiter.api.Test;
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+@@ -25,13 +25,15 @@
+     void existsByEmail() {
+         final var expectedEmail = "email@email.com";
+ 
+-        final var request = new UserRecord(expectedEmail, new RawPassword("password"));
++        final var request = new UserRequest(expectedEmail, new RawPassword("password"));
+         final var user = User.of(expectedEmail,
+-            EncodedPassword.from(request.rawPassword().password()));
++            EncodedPassword.from(request.password().password()));
++
++        assertThat(userRepository.existsByAccountEmail(expectedEmail)).isFalse();
+ 
+         userRepository.save(user);
+ 
+-        assertThat(userRepository.existsByEmail(expectedEmail)).isTrue();
++        assertThat(userRepository.existsByAccountEmail(expectedEmail)).isTrue();
+     }
+ 
+ }
+\ No newline at end of file
+Index: src/main/java/me/jaeyeopme/sns/service/GeneralUserService.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package me.jaeyeopme.sns.service;\n\nimport lombok.RequiredArgsConstructor;\nimport me.jaeyeopme.sns.config.Encoder;\nimport me.jaeyeopme.sns.entity.User;\nimport me.jaeyeopme.sns.exception.DuplicatedEmailException;\nimport me.jaeyeopme.sns.record.UserRecord;\nimport me.jaeyeopme.sns.repository.UserRepository;\nimport org.springframework.stereotype.Service;\n\n@RequiredArgsConstructor\n@Service\npublic class GeneralUserService implements UserService {\n\n    private final UserRepository userRepository;\n\n    private final Encoder encoder;\n\n    @Override\n    public User register(final UserRecord request) {\n        if (userRepository.existsByEmail(request.email())) {\n            throw new DuplicatedEmailException();\n        }\n\n        return userRepository.save(\n            User.of(request.email(), encoder.encode(request.rawPassword())));\n    }\n\n}\n
+===================================================================
+diff --git a/src/main/java/me/jaeyeopme/sns/service/GeneralUserService.java b/src/main/java/me/jaeyeopme/sns/service/GeneralUserService.java
+--- a/src/main/java/me/jaeyeopme/sns/service/GeneralUserService.java	
++++ b/src/main/java/me/jaeyeopme/sns/service/GeneralUserService.java	
+@@ -2,9 +2,9 @@
+ 
+ import lombok.RequiredArgsConstructor;
+ import me.jaeyeopme.sns.config.Encoder;
+-import me.jaeyeopme.sns.entity.User;
++import me.jaeyeopme.sns.dto.request.UserRequest;
++import me.jaeyeopme.sns.entity.user.User;
+ import me.jaeyeopme.sns.exception.DuplicatedEmailException;
+-import me.jaeyeopme.sns.record.UserRecord;
+ import me.jaeyeopme.sns.repository.UserRepository;
+ import org.springframework.stereotype.Service;
+ 
+@@ -17,13 +17,12 @@
+     private final Encoder encoder;
+ 
+     @Override
+-    public User register(final UserRecord request) {
+-        if (userRepository.existsByEmail(request.email())) {
++    public User register(final UserRequest request) {
++        if (userRepository.existsByAccountEmail(request.email())) {
+             throw new DuplicatedEmailException();
+         }
+ 
+-        return userRepository.save(
+-            User.of(request.email(), encoder.encode(request.rawPassword())));
++        return userRepository.save(User.of(request.email(), encoder.encode(request.password())));
+     }
+ 
+ }
+Index: src/main/java/me/jaeyeopme/sns/controller/UserController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package me.jaeyeopme.sns.controller;\n\nimport java.net.URI;\nimport javax.validation.Valid;\nimport lombok.RequiredArgsConstructor;\nimport me.jaeyeopme.sns.record.UserRecord;\nimport me.jaeyeopme.sns.service.UserService;\nimport org.springframework.http.ResponseEntity;\nimport org.springframework.web.bind.annotation.PostMapping;\nimport org.springframework.web.bind.annotation.RequestBody;\nimport org.springframework.web.bind.annotation.RequestMapping;\nimport org.springframework.web.bind.annotation.RestController;\n\n@RequiredArgsConstructor\n@RequestMapping(UserController.USER_API_V1)\n@RestController\npublic class UserController {\n\n    public static final String USER_API_V1 = \"/api/v1/users\";\n    private final UserService userService;\n\n    @PostMapping\n    public ResponseEntity<?> register(@RequestBody @Valid final UserRecord request) {\n        var user = userService.register(request);\n        var location = URI.create(USER_API_V1 + \"/\" + user.getId());\n\n        return ResponseEntity.created(location).build();\n    }\n\n}\n
+===================================================================
+diff --git a/src/main/java/me/jaeyeopme/sns/controller/UserController.java b/src/main/java/me/jaeyeopme/sns/controller/UserController.java
+--- a/src/main/java/me/jaeyeopme/sns/controller/UserController.java	
++++ b/src/main/java/me/jaeyeopme/sns/controller/UserController.java	
+@@ -3,7 +3,7 @@
+ import java.net.URI;
+ import javax.validation.Valid;
+ import lombok.RequiredArgsConstructor;
+-import me.jaeyeopme.sns.record.UserRecord;
++import me.jaeyeopme.sns.dto.request.UserRequest;
+ import me.jaeyeopme.sns.service.UserService;
+ import org.springframework.http.ResponseEntity;
+ import org.springframework.web.bind.annotation.PostMapping;
+@@ -20,9 +20,9 @@
+     private final UserService userService;
+ 
+     @PostMapping
+-    public ResponseEntity<?> register(@RequestBody @Valid final UserRecord request) {
++    public ResponseEntity<?> register(@RequestBody @Valid final UserRequest request) {
+         var user = userService.register(request);
+-        var location = URI.create(USER_API_V1 + "/" + user.getId());
++        var location = URI.create(USER_API_V1 + "/" + user.id());
+ 
+         return ResponseEntity.created(location).build();
+     }
+Index: src/main/java/me/jaeyeopme/sns/entity/BaseEntity.java
+===================================================================
+diff --git a/src/main/java/me/jaeyeopme/sns/entity/BaseEntity.java b/src/main/java/me/jaeyeopme/sns/entity/base/EntityBase.java
+rename from src/main/java/me/jaeyeopme/sns/entity/BaseEntity.java
+rename to src/main/java/me/jaeyeopme/sns/entity/base/EntityBase.java
+--- a/src/main/java/me/jaeyeopme/sns/entity/BaseEntity.java	
++++ b/src/main/java/me/jaeyeopme/sns/entity/base/EntityBase.java	
+@@ -1,4 +1,4 @@
+-package me.jaeyeopme.sns.entity;
++package me.jaeyeopme.sns.entity.base;
+ 
+ import java.time.LocalDateTime;
+ import javax.persistence.Column;
+@@ -7,15 +7,20 @@
+ import javax.persistence.GenerationType;
+ import javax.persistence.Id;
+ import javax.persistence.MappedSuperclass;
++import lombok.AccessLevel;
++import lombok.AllArgsConstructor;
+ import lombok.Getter;
++import lombok.NoArgsConstructor;
+ import org.springframework.data.annotation.CreatedDate;
+ import org.springframework.data.annotation.LastModifiedDate;
+ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+ 
+ @Getter
+-@MappedSuperclass
++@AllArgsConstructor(access = AccessLevel.PROTECTED)
++@NoArgsConstructor(access = AccessLevel.PROTECTED)
+ @EntityListeners(AuditingEntityListener.class)
+-public abstract class BaseEntity {
++@MappedSuperclass
++public abstract class EntityBase {
+ 
+     @GeneratedValue(strategy = GenerationType.IDENTITY)
+     @Id
+Index: src/test/java/me/jaeyeopme/sns/controller/UserControllerTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package me.jaeyeopme.sns.controller;\n\nimport static me.jaeyeopme.sns.controller.UserController.USER_API_V1;\nimport static org.mockito.ArgumentMatchers.any;\nimport static org.mockito.BDDMockito.given;\nimport static org.mockito.BDDMockito.then;\nimport static org.mockito.Mockito.never;\nimport static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;\nimport static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;\nimport static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;\nimport static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;\n\nimport com.fasterxml.jackson.databind.ObjectMapper;\nimport me.jaeyeopme.sns.entity.User;\nimport me.jaeyeopme.sns.entity.embeddable.EncodedPassword;\nimport me.jaeyeopme.sns.exception.DuplicatedEmailException;\nimport me.jaeyeopme.sns.record.RawPassword;\nimport me.jaeyeopme.sns.record.UserRecord;\nimport me.jaeyeopme.sns.service.UserService;\nimport org.junit.jupiter.api.DisplayName;\nimport org.junit.jupiter.api.Test;\nimport org.junit.jupiter.params.ParameterizedTest;\nimport org.junit.jupiter.params.provider.CsvSource;\nimport org.springframework.beans.factory.annotation.Autowired;\nimport org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;\nimport org.springframework.boot.test.mock.mockito.MockBean;\nimport org.springframework.http.HttpHeaders;\nimport org.springframework.http.MediaType;\nimport org.springframework.test.util.ReflectionTestUtils;\nimport org.springframework.test.web.servlet.MockMvc;\nimport org.springframework.test.web.servlet.ResultActions;\n\n@WebMvcTest(UserController.class)\nclass UserControllerTest {\n\n    @Autowired\n    private MockMvc mockMvc;\n\n    @Autowired\n    private ObjectMapper objectMapper;\n\n    @MockBean\n    private UserService userService;\n\n    @DisplayName(\"given null or blank email when user registration return HTTP status Bad Request\")\n    @CsvSource(value = {\n        \",\",\n        \"''\"\n    })\n    @ParameterizedTest\n    void given_nullOrBlankEmail_returnBadRequest(final String email)\n        throws Exception {\n        // Given\n        final var request = new UserRecord(email, new RawPassword(\"rawPassword\"));\n\n        // When\n        final var resultActions = getResultPost(request);\n\n        // Then\n        resultActions\n            .andExpectAll(status().isBadRequest());\n\n        then(userService).should(never()).register(request);\n    }\n\n    @DisplayName(\"given null or blank rawPassword when user registration return HTTP status Bad Request\")\n    @CsvSource(value = {\n        \",\",\n        \"''\"\n    })\n    @ParameterizedTest\n    void given_nullOrBlankPassword_returnBadRequest(final String password)\n        throws Exception {\n        // Given\n        final var request = new UserRecord(\"email@email.com\", new RawPassword(password));\n\n        // When\n        final var resultActions = getResultPost(request);\n\n        // Then\n        resultActions\n            .andExpectAll(status().isBadRequest());\n\n        then(userService).should(never()).register(request);\n    }\n\n    @DisplayName(\"given invalid formatting email when user registration return HTTP status Bad Request\")\n    @Test\n    void given_invalidFormatEmail_returnBadRequest() throws Exception {\n        // Given\n        final var request = new UserRecord(\"email#email.com\", new RawPassword(\"rawPassword\"));\n\n        // When\n        final var resultActions = getResultPost(request);\n\n        // Then\n        resultActions\n            .andExpectAll(status().isBadRequest());\n\n        then(userService).should(never()).register(request);\n    }\n\n    @DisplayName(\"given duplicated email when user registration return HTTP status Conflict\")\n    @Test\n    void given_duplicatedEmail_returnConflict() throws Exception {\n        // Given\n        final var request = new UserRecord(\"email@email.com\", new RawPassword(\"rawPassword\"));\n        final var reason = \"email is duplicate\";\n        given(userService.register(request)).willThrow(\n            new DuplicatedEmailException());\n\n        // When\n        final var resultActions = getResultPost(request);\n\n        // Then\n        resultActions\n            .andExpectAll(status().isConflict(),\n                status().reason(reason));\n\n        then(userService).should().register(request);\n    }\n\n    @DisplayName(\"given correct email and rawPassword when user registration return HTTP status Created\")\n    @Test\n    void given_correctEmailAndPassword_returnCreated() throws Exception {\n        // Given\n        final var request = new UserRecord(\"email@email.com\", new RawPassword(\"rawPassword\"));\n        final var user = User.of(request.email(),\n            EncodedPassword.from(request.rawPassword().password()));\n        ReflectionTestUtils.setField(user, \"id\", 1L);\n\n        given(userService.register(any())).willReturn(user);\n\n        // When\n        final var resultActions = getResultPost(request);\n\n        // Then\n        resultActions\n            .andExpectAll(status().isCreated(),\n                header().string(HttpHeaders.LOCATION,\n                    USER_API_V1 + \"/\" + user.getId()));\n\n        then(userService).should().register(request);\n    }\n\n    private ResultActions getResultPost(final UserRecord request) throws Exception {\n        return mockMvc.perform(post(USER_API_V1)\n                .contentType(MediaType.APPLICATION_JSON)\n                .content(objectMapper.writeValueAsString(request)))\n            .andDo(print());\n    }\n\n}
+===================================================================
+diff --git a/src/test/java/me/jaeyeopme/sns/controller/UserControllerTest.java b/src/test/java/me/jaeyeopme/sns/controller/UserControllerTest.java
+--- a/src/test/java/me/jaeyeopme/sns/controller/UserControllerTest.java	
++++ b/src/test/java/me/jaeyeopme/sns/controller/UserControllerTest.java	
+@@ -5,17 +5,17 @@
+ import static org.mockito.BDDMockito.given;
+ import static org.mockito.BDDMockito.then;
+ import static org.mockito.Mockito.never;
+-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
++import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+ 
+ import com.fasterxml.jackson.databind.ObjectMapper;
+-import me.jaeyeopme.sns.entity.User;
+-import me.jaeyeopme.sns.entity.embeddable.EncodedPassword;
++import me.jaeyeopme.sns.dto.request.UserRequest;
++import me.jaeyeopme.sns.dto.wrapper.RawPassword;
++import me.jaeyeopme.sns.entity.user.EncodedPassword;
++import me.jaeyeopme.sns.entity.user.User;
+ import me.jaeyeopme.sns.exception.DuplicatedEmailException;
+-import me.jaeyeopme.sns.record.RawPassword;
+-import me.jaeyeopme.sns.record.UserRecord;
+ import me.jaeyeopme.sns.service.UserService;
+ import org.junit.jupiter.api.DisplayName;
+ import org.junit.jupiter.api.Test;
+@@ -51,7 +51,7 @@
+     void given_nullOrBlankEmail_returnBadRequest(final String email)
+         throws Exception {
+         // Given
+-        final var request = new UserRecord(email, new RawPassword("rawPassword"));
++        final var request = new UserRequest(email, new RawPassword("rawPassword"));
+ 
+         // When
+         final var resultActions = getResultPost(request);
+@@ -72,7 +72,7 @@
+     void given_nullOrBlankPassword_returnBadRequest(final String password)
+         throws Exception {
+         // Given
+-        final var request = new UserRecord("email@email.com", new RawPassword(password));
++        final var request = new UserRequest("email@email.com", new RawPassword(password));
+ 
+         // When
+         final var resultActions = getResultPost(request);
+@@ -88,7 +88,7 @@
+     @Test
+     void given_invalidFormatEmail_returnBadRequest() throws Exception {
+         // Given
+-        final var request = new UserRecord("email#email.com", new RawPassword("rawPassword"));
++        final var request = new UserRequest("email#email.com", new RawPassword("rawPassword"));
+ 
+         // When
+         final var resultActions = getResultPost(request);
+@@ -104,10 +104,10 @@
+     @Test
+     void given_duplicatedEmail_returnConflict() throws Exception {
+         // Given
+-        final var request = new UserRecord("email@email.com", new RawPassword("rawPassword"));
++        final var request = new UserRequest("email@email.com", new RawPassword("rawPassword"));
+         final var reason = "email is duplicate";
+-        given(userService.register(request)).willThrow(
+-            new DuplicatedEmailException());
++
++        given(userService.register(request)).willThrow(new DuplicatedEmailException());
+ 
+         // When
+         final var resultActions = getResultPost(request);
+@@ -124,9 +124,9 @@
+     @Test
+     void given_correctEmailAndPassword_returnCreated() throws Exception {
+         // Given
+-        final var request = new UserRecord("email@email.com", new RawPassword("rawPassword"));
++        final var request = new UserRequest("email@email.com", new RawPassword("rawPassword"));
+         final var user = User.of(request.email(),
+-            EncodedPassword.from(request.rawPassword().password()));
++            EncodedPassword.from(request.password().password()));
+         ReflectionTestUtils.setField(user, "id", 1L);
+ 
+         given(userService.register(any())).willReturn(user);
+@@ -138,12 +138,12 @@
+         resultActions
+             .andExpectAll(status().isCreated(),
+                 header().string(HttpHeaders.LOCATION,
+-                    USER_API_V1 + "/" + user.getId()));
++                    USER_API_V1 + "/" + user.id()));
+ 
+         then(userService).should().register(request);
+     }
+ 
+-    private ResultActions getResultPost(final UserRecord request) throws Exception {
++    private ResultActions getResultPost(final UserRequest request) throws Exception {
+         return mockMvc.perform(post(USER_API_V1)
+                 .contentType(MediaType.APPLICATION_JSON)
+                 .content(objectMapper.writeValueAsString(request)))
+Index: src/main/java/me/jaeyeopme/sns/service/UserService.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package me.jaeyeopme.sns.service;\n\nimport me.jaeyeopme.sns.entity.User;\nimport me.jaeyeopme.sns.record.UserRecord;\n\npublic interface UserService {\n\n    User register(UserRecord request);\n\n}\n
+===================================================================
+diff --git a/src/main/java/me/jaeyeopme/sns/service/UserService.java b/src/main/java/me/jaeyeopme/sns/service/UserService.java
+--- a/src/main/java/me/jaeyeopme/sns/service/UserService.java	
++++ b/src/main/java/me/jaeyeopme/sns/service/UserService.java	
+@@ -1,10 +1,10 @@
+ package me.jaeyeopme.sns.service;
+ 
+-import me.jaeyeopme.sns.entity.User;
+-import me.jaeyeopme.sns.record.UserRecord;
++import me.jaeyeopme.sns.dto.request.UserRequest;
++import me.jaeyeopme.sns.entity.user.User;
+ 
+ public interface UserService {
+ 
+-    User register(UserRecord request);
++    User register(UserRequest request);
+ 
+ }
