@@ -1,0 +1,24 @@
+server:
+  error:
+    whitelabel:
+      enabled: false
+
+spring:
+  profiles:
+    active: local
+
+  output:
+    ansi:
+      enabled: detect
+
+  devtools:
+    add-properties: false
+
+  session:
+    store-type: redis
+
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate:
+        globally_quoted_identifiers: true
