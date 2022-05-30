@@ -4,9 +4,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
 public record AccountRequest(
-    @NotBlank @Pattern(regexp = EMAIL_REGEXP, message = "must be a well-formed email address") String email,
-    @NotBlank @Pattern(regexp = PHONE_REGEXP, message = "must be a well-formed phone number") String phone,
-    @NotBlank @Pattern(regexp = PASSWORD_REGEXP, message = "must be a well-formed password") String password,
+    @NotBlank @Pattern(regexp = EMAIL_REGEXP, message = "The email address is not available.") String email,
+    @NotBlank @Pattern(regexp = PHONE_REGEXP, message = "The phone number is not available.") String phone,
+    @NotBlank @Pattern(regexp = PASSWORD_REGEXP, message = "The password is not available.") String password,
     @NotBlank String name,
     String bio) {
 
