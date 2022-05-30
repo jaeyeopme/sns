@@ -9,4 +9,6 @@ public interface AccountService {
 
     boolean existsByEmail(String email);
 
+    boolean existsByPhone(String phone);
+
 }
