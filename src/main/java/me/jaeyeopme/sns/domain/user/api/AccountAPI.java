@@ -4,7 +4,7 @@ import java.net.URI;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import me.jaeyeopme.sns.domain.user.application.AccountService;
-import me.jaeyeopme.sns.domain.user.dto.AccountRequest;
+import me.jaeyeopme.sns.domain.user.record.AccountRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
