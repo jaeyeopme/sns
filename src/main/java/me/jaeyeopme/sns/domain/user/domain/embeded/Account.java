@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import me.jaeyeopme.sns.domain.user.dto.AccountRequest;
+import me.jaeyeopme.sns.domain.user.record.AccountRequest;
 
 @Getter
 @Builder(access = AccessLevel.PRIVATE)
@@ -37,11 +37,11 @@ public class Account {
 
     public static Account of(final AccountRequest request) {
         return Account.builder()
-            .email(Email.of(request.getEmail()))
-            .phone(Phone.of(request.getPhone()))
-            .password(Password.of(request.getPassword()))
-            .name(request.getName())
-            .bio(request.getBio())
+            .email(Email.of(request.email()))
+            .phone(Phone.of(request.phone()))
+            .password(Password.of(request.password()))
+            .name(request.name())
+            .bio(request.bio())
             .build();
     }
 
