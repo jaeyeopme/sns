@@ -3,7 +3,6 @@ package me.jaeyeopme.sns.domain.user.api;
 import static me.jaeyeopme.sns.domain.user.api.AccountAPI.ACCOUNT_API_V1;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.never;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -11,8 +10,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import me.jaeyeopme.sns.domain.user.application.AccountService;
-import me.jaeyeopme.sns.domain.user.domain.User;
-import me.jaeyeopme.sns.domain.user.domain.embeded.Account;
 import me.jaeyeopme.sns.domain.user.domain.embeded.Email;
 import me.jaeyeopme.sns.domain.user.domain.embeded.Password;
 import me.jaeyeopme.sns.domain.user.domain.embeded.Phone;
@@ -26,7 +23,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -60,7 +56,7 @@ public class AccountAPITest {
             PHONE.getValue(),
             PASSWORD.getValue(),
             NAME, BIO);
-        given(accountService.existsByEmail(request.email())).willReturn(Boolean.TRUE);
+        given(accountService.create(request)).willThrow(new DuplicateEmailException());
 
         // WHEN
         final var when = getPostResult(objectMapper.writeValueAsString(request));
@@ -68,9 +64,7 @@ public class AccountAPITest {
         // THEN
         when.andExpectAll(status().isConflict(),
             status().reason(DuplicateEmailException.REASON));
-        then(accountService).should().existsByEmail(request.email());
-        then(accountService).should(never()).existsByPhone(request.phone());
-        then(accountService).should(never()).create(request);
+        then(accountService).should().create(request);
     }
 
     @DisplayName("전화번호가 중복된 경우 회원 가입을 실패하고 HTTP 409를 반환한다.")
@@ -81,8 +75,7 @@ public class AccountAPITest {
             PHONE.getValue(),
             PASSWORD.getValue(),
             NAME, BIO);
-        given(accountService.existsByEmail(request.email())).willReturn(Boolean.FALSE);
-        given(accountService.existsByPhone(request.phone())).willReturn(Boolean.TRUE);
+        given(accountService.create(request)).willThrow(new DuplicatePhoneException());
 
         // WHEN
         final var when = getPostResult(objectMapper.writeValueAsString(request));
@@ -90,9 +83,7 @@ public class AccountAPITest {
         // THEN
         when.andExpectAll(status().isConflict(),
             status().reason(DuplicatePhoneException.REASON));
-        then(accountService).should().existsByEmail(request.email());
-        then(accountService).should().existsByPhone(request.phone());
-        then(accountService).should(never()).create(request);
+        then(accountService).should().create(request);
     }
 
     @DisplayName("입력 값이 올바른 경우 회원을 가입하고 HTTP 201을 반환한다.")
@@ -103,21 +94,14 @@ public class AccountAPITest {
             PHONE.getValue(),
             PASSWORD.getValue(),
             NAME, BIO);
-        final var user = User.of(Account.of(request));
-        final var id = 1L;
-        ReflectionTestUtils.setField(user, "id", id);
-        given(accountService.existsByEmail(request.email())).willReturn(Boolean.FALSE);
-        given(accountService.existsByPhone(request.phone())).willReturn(Boolean.FALSE);
-        given(accountService.create(request)).willReturn(user);
+        given(accountService.create(request)).willReturn(1L);
 
         // WHEN
         final var when = getPostResult(objectMapper.writeValueAsString(request));
 
         // THEN
         when.andExpectAll(status().isCreated(),
-            header().string(HttpHeaders.LOCATION, "%s/%s".formatted(ACCOUNT_API_V1, id)));
-        then(accountService).should().existsByEmail(request.email());
-        then(accountService).should().existsByPhone(request.phone());
+            header().string(HttpHeaders.LOCATION, "%s/%s".formatted(ACCOUNT_API_V1, 1L)));
         then(accountService).should().create(request);
     }
 
