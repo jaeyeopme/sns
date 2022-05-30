@@ -7,4 +7,6 @@ public interface AccountService {
 
     User create(AccountRequest request);
 
+    boolean existsByEmail(String email);
+
 }

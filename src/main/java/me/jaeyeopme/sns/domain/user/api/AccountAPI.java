@@ -4,6 +4,7 @@ import java.net.URI;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import me.jaeyeopme.sns.domain.user.application.AccountService;
+import me.jaeyeopme.sns.domain.user.exception.DuplicateEmailException;
 import me.jaeyeopme.sns.domain.user.record.AccountRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +24,10 @@ public class AccountAPI {
     @PostMapping
     public ResponseEntity<Void> create(
         @RequestBody @Valid final AccountRequest request) {
+        if (accountService.existsByEmail(request.email())) {
+            throw new DuplicateEmailException();
+        }
+
         final var user = accountService.create(request);
         final var location = URI.create("%s/%s".formatted(ACCOUNT_API_V1, user.getId()));
 
