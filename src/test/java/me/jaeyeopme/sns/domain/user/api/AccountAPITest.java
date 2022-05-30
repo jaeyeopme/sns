@@ -2,6 +2,9 @@ package me.jaeyeopme.sns.domain.user.api;
 
 import static me.jaeyeopme.sns.domain.user.api.AccountAPI.ACCOUNT_API_V1;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.only;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -14,6 +17,7 @@ import me.jaeyeopme.sns.domain.user.domain.embeded.Account;
 import me.jaeyeopme.sns.domain.user.domain.embeded.Email;
 import me.jaeyeopme.sns.domain.user.domain.embeded.Password;
 import me.jaeyeopme.sns.domain.user.domain.embeded.Phone;
+import me.jaeyeopme.sns.domain.user.exception.DuplicateEmailException;
 import me.jaeyeopme.sns.domain.user.record.AccountRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -67,6 +71,27 @@ public class AccountAPITest {
         // THEN
         when.andExpectAll(status().isCreated(),
             header().string(HttpHeaders.LOCATION, "%s/%s".formatted(ACCOUNT_API_V1, id)));
+        then(accountService).should(only()).create(request);
+    }
+
+    @DisplayName("이메일이 중복된 경우 회원 가입을 실패하고 HTTP 409를 반환한다.")
+    @Test
+    void Given_DuplicatedEmail_When_Creat_Then_HTTP409() throws Exception {
+        // GIVEN
+        final var request = new AccountRequest(EMAIL.getValue(),
+            PHONE.getValue(),
+            PASSWORD.getValue(),
+            NAME, BIO);
+        given(accountService.existsByEmail(request.email())).willReturn(Boolean.TRUE);
+
+        // WHEN
+        final var when = getPostResult(objectMapper.writeValueAsString(request));
+
+        // THEN
+        when.andExpectAll(status().isConflict(),
+            status().reason(DuplicateEmailException.REASON));
+        then(accountService).should(only()).existsByEmail(request.email());
+        then(accountService).should(never()).create(request);
     }
 
     private ResultActions getPostResult(final String content) throws Exception {
