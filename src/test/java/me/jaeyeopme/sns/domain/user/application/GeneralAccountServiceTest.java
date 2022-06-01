@@ -7,12 +7,12 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.never;
 
+import me.jaeyeopme.sns.domain.user.domain.Account;
+import me.jaeyeopme.sns.domain.user.domain.Email;
+import me.jaeyeopme.sns.domain.user.domain.Password;
+import me.jaeyeopme.sns.domain.user.domain.Phone;
 import me.jaeyeopme.sns.domain.user.domain.User;
 import me.jaeyeopme.sns.domain.user.domain.UserRepository;
-import me.jaeyeopme.sns.domain.user.domain.embeded.Account;
-import me.jaeyeopme.sns.domain.user.domain.embeded.Email;
-import me.jaeyeopme.sns.domain.user.domain.embeded.Password;
-import me.jaeyeopme.sns.domain.user.domain.embeded.Phone;
 import me.jaeyeopme.sns.domain.user.exception.DuplicateEmailException;
 import me.jaeyeopme.sns.domain.user.exception.DuplicatePhoneException;
 import me.jaeyeopme.sns.domain.user.record.AccountRequest;
@@ -30,7 +30,7 @@ class GeneralAccountServiceTest {
 
     private final static Email EMAIL = Email.of("email@email.com");
 
-    private final static Phone PHONE = Phone.of("+82-10-1234-5678");
+    private final static Phone PHONE = Phone.of("+821012345678");
 
     private final static Password PASSWORD = Password.of("password1234");
 
@@ -55,16 +55,18 @@ class GeneralAccountServiceTest {
         final var expected = User.of(Account.of(request));
         ReflectionTestUtils.setField(expected, "id", 1L);
         given(userRepository.save(any(User.class))).willReturn(expected);
-        given(userRepository.existsByAccountEmailValue(request.email())).willReturn(Boolean.FALSE);
-        given(userRepository.existsByAccountPhoneValue(request.phone())).willReturn(Boolean.FALSE);
+        given(userRepository.existsByAccountEmailValue(request.email().getValue())).willReturn(
+            Boolean.FALSE);
+        given(userRepository.existsByAccountPhoneValue(request.phone().getValue())).willReturn(
+            Boolean.FALSE);
 
         // WHEN
         final var actual = accountService.create(request);
 
         // THEN
         assertThat(actual).isEqualTo(expected.getId());
-        then(userRepository).should().existsByAccountEmailValue(request.email());
-        then(userRepository).should().existsByAccountPhoneValue(request.phone());
+        then(userRepository).should().existsByAccountEmailValue(request.email().getValue());
+        then(userRepository).should().existsByAccountPhoneValue(request.phone().getValue());
         then(userRepository).should().save(any(User.class));
     }
 
@@ -76,15 +78,16 @@ class GeneralAccountServiceTest {
             PHONE.getValue(),
             PASSWORD.getValue(),
             NAME, BIO);
-        given(userRepository.existsByAccountEmailValue(request.email())).willReturn(Boolean.TRUE);
+        given(userRepository.existsByAccountEmailValue(request.email().getValue())).willReturn(
+            Boolean.TRUE);
 
         // WHEN
         final Executable when = () -> accountService.create(request);
 
         // THEN
         assertThrows(DuplicateEmailException.class, when, DuplicateEmailException.REASON);
-        then(userRepository).should().existsByAccountEmailValue(request.email());
-        then(userRepository).should(never()).existsByAccountPhoneValue(request.phone());
+        then(userRepository).should().existsByAccountEmailValue(request.email().getValue());
+        then(userRepository).should(never()).existsByAccountPhoneValue(request.phone().getValue());
         then(userRepository).should(never()).save(any(User.class));
     }
 
@@ -96,16 +99,18 @@ class GeneralAccountServiceTest {
             PHONE.getValue(),
             PASSWORD.getValue(),
             NAME, BIO);
-        given(userRepository.existsByAccountEmailValue(request.email())).willReturn(Boolean.FALSE);
-        given(userRepository.existsByAccountPhoneValue(request.phone())).willReturn(Boolean.TRUE);
+        given(userRepository.existsByAccountEmailValue(request.email().getValue())).willReturn(
+            Boolean.FALSE);
+        given(userRepository.existsByAccountPhoneValue(request.phone().getValue())).willReturn(
+            Boolean.TRUE);
 
         // WHEN
         final Executable when = () -> accountService.create(request);
 
         // THEN
         assertThrows(DuplicatePhoneException.class, when, DuplicatePhoneException.REASON);
-        then(userRepository).should().existsByAccountEmailValue(request.email());
-        then(userRepository).should().existsByAccountPhoneValue(request.phone());
+        then(userRepository).should().existsByAccountEmailValue(request.email().getValue());
+        then(userRepository).should().existsByAccountPhoneValue(request.phone().getValue());
         then(userRepository).should(never()).save(any(User.class));
     }
 

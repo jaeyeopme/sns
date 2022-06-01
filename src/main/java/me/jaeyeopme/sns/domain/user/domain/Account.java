@@ -1,4 +1,4 @@
-package me.jaeyeopme.sns.domain.user.domain.embeded;
+package me.jaeyeopme.sns.domain.user.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -26,8 +26,8 @@ public class Account {
     @Embedded
     private Password password;
 
-    @Column(nullable = false)
-    private String name;
+    @Embedded
+    private Name name;
 
     @Column
     private String photo;
@@ -37,9 +37,9 @@ public class Account {
 
     public static Account of(final AccountRequest request) {
         return Account.builder()
-            .email(Email.of(request.email()))
-            .phone(Phone.of(request.phone()))
-            .password(Password.of(request.password()))
+            .email(request.email())
+            .phone(request.phone())
+            .password(request.password())
             .name(request.name())
             .bio(request.bio())
             .build();

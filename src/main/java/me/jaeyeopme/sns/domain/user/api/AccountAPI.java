@@ -1,7 +1,6 @@
 package me.jaeyeopme.sns.domain.user.api;
 
 import java.net.URI;
-import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import me.jaeyeopme.sns.domain.user.application.AccountService;
 import me.jaeyeopme.sns.domain.user.record.AccountRequest;
@@ -21,7 +20,7 @@ public class AccountAPI {
     private final AccountService accountService;
 
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody @Valid final AccountRequest request) {
+    public ResponseEntity<Void> create(@RequestBody final AccountRequest request) {
         final var userId = accountService.create(request);
         final var location = URI.create("%s/%s".formatted(ACCOUNT_API_V1, userId));
 

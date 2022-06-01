@@ -1,9 +1,11 @@
 package me.jaeyeopme.sns.domain.user.application;
 
 import lombok.RequiredArgsConstructor;
+import me.jaeyeopme.sns.domain.user.domain.Account;
+import me.jaeyeopme.sns.domain.user.domain.Email;
+import me.jaeyeopme.sns.domain.user.domain.Phone;
 import me.jaeyeopme.sns.domain.user.domain.User;
 import me.jaeyeopme.sns.domain.user.domain.UserRepository;
-import me.jaeyeopme.sns.domain.user.domain.embeded.Account;
 import me.jaeyeopme.sns.domain.user.exception.DuplicateEmailException;
 import me.jaeyeopme.sns.domain.user.exception.DuplicatePhoneException;
 import me.jaeyeopme.sns.domain.user.record.AccountRequest;
@@ -32,14 +34,14 @@ public class GeneralAccountService implements AccountService {
 
     @Transactional(readOnly = true)
     @Override
-    public boolean existsByEmail(final String email) {
-        return userRepository.existsByAccountEmailValue(email);
+    public boolean existsByEmail(final Email email) {
+        return userRepository.existsByAccountEmailValue(email.getValue());
     }
 
     @Transactional(readOnly = true)
     @Override
-    public boolean existsByPhone(final String phone) {
-        return userRepository.existsByAccountPhoneValue(phone);
+    public boolean existsByPhone(final Phone phone) {
+        return userRepository.existsByAccountPhoneValue(phone.getValue());
     }
 
 }
