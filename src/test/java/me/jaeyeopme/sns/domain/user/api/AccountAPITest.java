@@ -10,9 +10,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import me.jaeyeopme.sns.domain.user.application.AccountService;
-import me.jaeyeopme.sns.domain.user.domain.embeded.Email;
-import me.jaeyeopme.sns.domain.user.domain.embeded.Password;
-import me.jaeyeopme.sns.domain.user.domain.embeded.Phone;
+import me.jaeyeopme.sns.domain.user.domain.Email;
+import me.jaeyeopme.sns.domain.user.domain.Password;
+import me.jaeyeopme.sns.domain.user.domain.Phone;
 import me.jaeyeopme.sns.domain.user.exception.DuplicateEmailException;
 import me.jaeyeopme.sns.domain.user.exception.DuplicatePhoneException;
 import me.jaeyeopme.sns.domain.user.record.AccountRequest;
@@ -31,7 +31,7 @@ public class AccountAPITest {
 
     private final static Email EMAIL = Email.of("email@email.com");
 
-    private final static Phone PHONE = Phone.of("+82-10-1234-5678");
+    private final static Phone PHONE = Phone.of("+821012345678");
 
     private final static Password PASSWORD = Password.of("password1234");
 

@@ -7,7 +7,7 @@ plugins {
 
 group = 'me.jaeyeopme'
 version = '0.0.1'
-sourceCompatibility = '17'
+sourceCompatibility = JavaVersion.VERSION_17
 
 configurations {
     compileOnly {
@@ -35,7 +35,6 @@ dependencies {
 
     implementation "${boot}:${starter}-web"
     implementation "${boot}:${starter}-data-jpa"
-    implementation "${boot}:${starter}-validation"
 
     developmentOnly "${boot}:spring-boot-devtools"
 

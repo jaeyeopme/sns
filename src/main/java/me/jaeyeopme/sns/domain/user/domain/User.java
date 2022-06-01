@@ -10,7 +10,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import me.jaeyeopme.sns.domain.user.domain.embeded.Account;
 
 @Getter
 @Builder(access = AccessLevel.PRIVATE)
