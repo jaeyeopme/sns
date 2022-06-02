@@ -9,7 +9,6 @@ import me.jaeyeopme.sns.domain.user.domain.UserRepository;
 import me.jaeyeopme.sns.domain.user.exception.DuplicateEmailException;
 import me.jaeyeopme.sns.domain.user.exception.DuplicatePhoneException;
 import me.jaeyeopme.sns.domain.user.record.AccountRequest;
-import me.jaeyeopme.sns.global.config.UserPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class GeneralAccountService implements AccountService {
 
     private final UserRepository userRepository;
-    private final UserPasswordEncoder encoder;
+    private final AccountPasswordEncoder encoder;
 
     @Transactional
     @Override

@@ -2,18 +2,20 @@ package me.jaeyeopme.sns.global.config;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import me.jaeyeopme.sns.domain.user.application.AccountPasswordEncoder;
+import me.jaeyeopme.sns.domain.user.application.BCryptAccountPasswordEncoder;
 import me.jaeyeopme.sns.domain.user.domain.RawPassword;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class BCryptUserPasswordEncoderTest {
+class BCryptAccountPasswordEncoderTest {
 
-    private UserPasswordEncoder encoder;
+    private AccountPasswordEncoder encoder;
 
     @BeforeEach
     void setUp() {
-        this.encoder = new BCryptUserPasswordEncoder();
+        this.encoder = new BCryptAccountPasswordEncoder();
     }
 
     @DisplayName("비밀번호 인코딩을 성공 합니다.")
