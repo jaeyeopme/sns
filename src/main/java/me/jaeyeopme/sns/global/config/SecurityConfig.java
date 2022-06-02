@@ -1,5 +1,7 @@
 package me.jaeyeopme.sns.global.config;
 
+import me.jaeyeopme.sns.domain.user.application.AccountPasswordEncoder;
+import me.jaeyeopme.sns.domain.user.application.BCryptAccountPasswordEncoder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -7,8 +9,8 @@ import org.springframework.context.annotation.Configuration;
 public class SecurityConfig {
 
     @Bean
-    public UserPasswordEncoder encoder() {
-        return new BCryptUserPasswordEncoder();
+    public AccountPasswordEncoder encoder() {
+        return new BCryptAccountPasswordEncoder();
     }
 
 }

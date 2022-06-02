@@ -18,7 +18,6 @@ import me.jaeyeopme.sns.domain.user.domain.UserRepository;
 import me.jaeyeopme.sns.domain.user.exception.DuplicateEmailException;
 import me.jaeyeopme.sns.domain.user.exception.DuplicatePhoneException;
 import me.jaeyeopme.sns.domain.user.record.AccountRequest;
-import me.jaeyeopme.sns.global.config.UserPasswordEncoder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -48,7 +47,7 @@ class GeneralAccountServiceTest {
     private UserRepository userRepository;
 
     @Mock
-    private UserPasswordEncoder encoder;
+    private AccountPasswordEncoder encoder;
 
     @DisplayName("이메일이 중복되는 경우 회원 가입을 실패 한다.")
     @Test

@@ -1,10 +1,10 @@
-package me.jaeyeopme.sns.global.config;
+package me.jaeyeopme.sns.domain.user.application;
 
 import me.jaeyeopme.sns.domain.user.domain.EncodedPassword;
 import me.jaeyeopme.sns.domain.user.domain.RawPassword;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-public class BCryptUserPasswordEncoder implements UserPasswordEncoder {
+public class BCryptAccountPasswordEncoder implements AccountPasswordEncoder {
 
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
