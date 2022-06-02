@@ -24,7 +24,7 @@ public class Account {
     private Phone phone;
 
     @Embedded
-    private Password password;
+    private EncodedPassword password;
 
     @Embedded
     private Name name;
@@ -35,13 +35,14 @@ public class Account {
     @Column
     private String bio;
 
-    public static Account of(final AccountRequest request) {
+    public static Account of(final AccountRequest request,
+        final EncodedPassword encodedPassword) {
         return Account.builder()
             .email(request.email())
             .phone(request.phone())
-            .password(request.password())
             .name(request.name())
             .bio(request.bio())
+            .password(encodedPassword)
             .build();
     }
 

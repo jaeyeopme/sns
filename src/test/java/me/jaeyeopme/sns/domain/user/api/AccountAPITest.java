@@ -16,8 +16,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
 import me.jaeyeopme.sns.domain.user.application.AccountService;
 import me.jaeyeopme.sns.domain.user.domain.Email;
-import me.jaeyeopme.sns.domain.user.domain.Password;
+import me.jaeyeopme.sns.domain.user.domain.Name;
 import me.jaeyeopme.sns.domain.user.domain.Phone;
+import me.jaeyeopme.sns.domain.user.domain.RawPassword;
 import me.jaeyeopme.sns.domain.user.exception.DuplicateEmailException;
 import me.jaeyeopme.sns.domain.user.exception.DuplicatePhoneException;
 import me.jaeyeopme.sns.domain.user.record.AccountRequest;
@@ -38,9 +39,9 @@ public class AccountAPITest {
 
     private final static Phone PHONE = Phone.of("+821012345678");
 
-    private final static Password PASSWORD = Password.of("password1234");
+    private final static RawPassword RAW_PASSWORD = RawPassword.of("password1234");
 
-    private final static String NAME = "name";
+    private final static Name NAME = Name.of("name");
 
     private final static String BIO = "bio";
 
@@ -57,11 +58,14 @@ public class AccountAPITest {
     @Test
     void Given_DuplicatedEmail_When_Creat_Then_HTTP409() throws Exception {
         // GIVEN
-        final var request = new AccountRequest(EMAIL.getValue(),
+        final var request = new AccountRequest(
+            EMAIL.getValue(),
             PHONE.getValue(),
-            PASSWORD.getValue(),
-            NAME, BIO);
-        given(accountService.create(request)).willThrow(new DuplicateEmailException());
+            RAW_PASSWORD.getValue(),
+            NAME.getValue(),
+            BIO);
+        given(accountService.create(request))
+            .willThrow(new DuplicateEmailException());
 
         // WHEN
         final var when = getPostResult(objectMapper.writeValueAsString(request));
@@ -69,18 +73,22 @@ public class AccountAPITest {
         // THEN
         when.andExpectAll(status().isConflict(),
             status().reason(DuplicateEmailException.REASON));
-        then(accountService).should(only()).create(request);
+        then(accountService).should(only())
+            .create(request);
     }
 
     @DisplayName("전화번호가 중복되는 경우 회원 가입을 실패하고 HTTP 409를 반환한다.")
     @Test
     void Given_DuplicatedPhone_When_Creat_Then_HTTP409() throws Exception {
         // GIVEN
-        final var request = new AccountRequest(EMAIL.getValue(),
+        final var request = new AccountRequest(
+            EMAIL.getValue(),
             PHONE.getValue(),
-            PASSWORD.getValue(),
-            NAME, BIO);
-        given(accountService.create(request)).willThrow(new DuplicatePhoneException());
+            RAW_PASSWORD.getValue(),
+            NAME.getValue(),
+            BIO);
+        given(accountService.create(request))
+            .willThrow(new DuplicatePhoneException());
 
         // WHEN
         final var when = getPostResult(objectMapper.writeValueAsString(request));
@@ -88,18 +96,22 @@ public class AccountAPITest {
         // THEN
         when.andExpectAll(status().isConflict(),
             status().reason(DuplicatePhoneException.REASON));
-        then(accountService).should(only()).create(request);
+        then(accountService).should(only())
+            .create(request);
     }
 
     @DisplayName("입력 값이 올바른 경우 회원을 가입하고 HTTP 201을 반환한다.")
     @Test
     void Given_CorrectInput_When_Create_Then_HTTP201() throws Exception {
         // GIVEN
-        final var request = new AccountRequest(EMAIL.getValue(),
+        final var request = new AccountRequest(
+            EMAIL.getValue(),
             PHONE.getValue(),
-            PASSWORD.getValue(),
-            NAME, BIO);
-        given(accountService.create(request)).willReturn(1L);
+            RAW_PASSWORD.getValue(),
+            NAME.getValue(),
+            BIO);
+        given(accountService.create(request))
+            .willReturn(1L);
 
         // WHEN
         final var when = getPostResult(objectMapper.writeValueAsString(request));
@@ -107,28 +119,32 @@ public class AccountAPITest {
         // THEN
         when.andExpectAll(status().isCreated(),
             header().string(HttpHeaders.LOCATION, "%s/%s".formatted(ACCOUNT_API_V1, 1L)));
-        then(accountService).should(only()).create(request);
+        then(accountService).should(only())
+            .create(request);
     }
 
     @DisplayName("이메일이 중복되지 않은 경우 HTTP 200을 반환한다.")
     @Test
     void Given_CorrectInput_When_VerifyDuplicatedEmail_Then_HTTP200() throws Exception {
         // GIVEN
-        willDoNothing().given(accountService).verifyDuplicatedEmail(EMAIL);
+        willDoNothing().given(accountService)
+            .verifyDuplicatedEmail(EMAIL);
 
         // WHEN
         final var when = getGetResult("/email/{email}", EMAIL.getValue());
 
         // THEN
         when.andExpectAll(status().isOk());
-        then(accountService).should(only()).verifyDuplicatedEmail(EMAIL);
+        then(accountService).should(only())
+            .verifyDuplicatedEmail(EMAIL);
     }
 
     @DisplayName("이메일이 중복되는 경우 HTTP 409를 반환한다.")
     @Test
     void Given_CorrectInput_When_VerifyDuplicatedEmail_Then_HTTP409() throws Exception {
         // GIVEN
-        willThrow(DuplicateEmailException.class).given(accountService).verifyDuplicatedEmail(EMAIL);
+        willThrow(DuplicateEmailException.class).given(accountService)
+            .verifyDuplicatedEmail(EMAIL);
 
         // WHEN
         final var when = getGetResult("/email/{email}", EMAIL.getValue());
@@ -136,28 +152,32 @@ public class AccountAPITest {
         // THEN
         when.andExpectAll(status().isConflict(),
             status().reason(DuplicateEmailException.REASON));
-        then(accountService).should(only()).verifyDuplicatedEmail(EMAIL);
+        then(accountService).should(only())
+            .verifyDuplicatedEmail(EMAIL);
     }
 
     @DisplayName("전화번호가 중복되지 않은 경우 HTTP 200을 반환한다.")
     @Test
     void Given_CorrectInput_When_VerifyDuplicatedPhone_Then_HTTP200() throws Exception {
         // GIVEN
-        willDoNothing().given(accountService).verifyDuplicatedPhone(PHONE);
+        willDoNothing().given(accountService)
+            .verifyDuplicatedPhone(PHONE);
 
         // WHEN
         final var when = getGetResult("/phone/{phone}", PHONE.getValue());
 
         // THEN
         when.andExpectAll(status().isOk());
-        then(accountService).should(only()).verifyDuplicatedPhone(PHONE);
+        then(accountService).should(only())
+            .verifyDuplicatedPhone(PHONE);
     }
 
     @DisplayName("전화번호가 중복되는 경우 HTTP 409를 반환한다.")
     @Test
     void Given_CorrectInput_When_ExistsEmail_Then_HTTP409() throws Exception {
         // GIVEN
-        willThrow(DuplicatePhoneException.class).given(accountService).verifyDuplicatedPhone(PHONE);
+        willThrow(DuplicatePhoneException.class).given(accountService)
+            .verifyDuplicatedPhone(PHONE);
 
         // WHEN
         final var when = getGetResult("/phone/{phone}", PHONE.getValue());
@@ -165,7 +185,8 @@ public class AccountAPITest {
         // THEN
         when.andExpectAll(status().isConflict(),
             status().reason(DuplicatePhoneException.REASON));
-        then(accountService).should(only()).verifyDuplicatedPhone(PHONE);
+        then(accountService).should(only())
+            .verifyDuplicatedPhone(PHONE);
     }
 
     private ResultActions getPostResult(final String content) throws Exception {
