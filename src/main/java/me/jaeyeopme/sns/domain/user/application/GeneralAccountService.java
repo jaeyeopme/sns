@@ -21,27 +21,25 @@ public class GeneralAccountService implements AccountService {
     @Transactional
     @Override
     public Long create(final AccountRequest request) {
-        if (existsByEmail(request.email())) {
-            throw new DuplicateEmailException();
-        }
-
-        if (existsByPhone(request.phone())) {
-            throw new DuplicatePhoneException();
-        }
-
+        verifyDuplicatedEmail(request.email());
+        verifyDuplicatedPhone(request.phone());
         return userRepository.save(User.of(Account.of(request))).getId();
     }
 
     @Transactional(readOnly = true)
     @Override
-    public boolean existsByEmail(final Email email) {
-        return userRepository.existsByAccountEmailValue(email.getValue());
+    public void verifyDuplicatedEmail(final Email email) {
+        if (userRepository.existsByAccountEmailValue(email.getValue())) {
+            throw new DuplicateEmailException();
+        }
     }
 
     @Transactional(readOnly = true)
     @Override
-    public boolean existsByPhone(final Phone phone) {
-        return userRepository.existsByAccountPhoneValue(phone.getValue());
+    public void verifyDuplicatedPhone(final Phone phone) {
+        if (userRepository.existsByAccountPhoneValue(phone.getValue())) {
+            throw new DuplicatePhoneException();
+        }
     }
 
 }

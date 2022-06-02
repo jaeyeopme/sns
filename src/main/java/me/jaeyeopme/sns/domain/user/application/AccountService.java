@@ -8,8 +8,8 @@ public interface AccountService {
 
     Long create(AccountRequest request);
 
-    boolean existsByEmail(Email email);
+    void verifyDuplicatedEmail(Email email);
 
-    boolean existsByPhone(Phone phone);
+    void verifyDuplicatedPhone(Phone phone);
 
 }
