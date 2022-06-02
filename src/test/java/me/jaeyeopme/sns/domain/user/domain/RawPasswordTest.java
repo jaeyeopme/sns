@@ -11,7 +11,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 
-class PasswordTest {
+class RawPasswordTest {
 
     @DisplayName("입력 값이 최소 8자, 하나 이상의 문자와 숫자인 경우 비밀번호를 생성한다.")
     @Test
@@ -20,7 +20,7 @@ class PasswordTest {
         final var value = "password1234";
 
         // WHEN
-        final var password = Password.of(value);
+        final var password = RawPassword.of(value);
 
         // THEN
         assertThat(value).isEqualTo(password.getValue());
@@ -31,7 +31,7 @@ class PasswordTest {
     @ParameterizedTest
     void Given_NullOrBlank_When_Create_Then_ThrowException(final String value) {
         // WHEN
-        final Executable when = () -> Password.of(value);
+        final Executable when = () -> RawPassword.of(value);
 
         // THEN
         assertThrows(InvalidArgumentException.class, when);
@@ -42,7 +42,7 @@ class PasswordTest {
     @ParameterizedTest
     void Given_InvalidFormed_When_Create_Then_ThrowException(final String value) {
         // WHEN
-        final Executable when = () -> Password.of(value);
+        final Executable when = () -> RawPassword.of(value);
 
         // THEN
         assertThrows(InvalidArgumentException.class, when);
