@@ -1,5 +1,6 @@
 package me.jaeyeopme.sns.domain.user.application;
 
+import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import me.jaeyeopme.sns.domain.user.domain.Account;
 import me.jaeyeopme.sns.domain.user.domain.Email;
@@ -8,7 +9,10 @@ import me.jaeyeopme.sns.domain.user.domain.User;
 import me.jaeyeopme.sns.domain.user.domain.UserRepository;
 import me.jaeyeopme.sns.domain.user.exception.DuplicateEmailException;
 import me.jaeyeopme.sns.domain.user.exception.DuplicatePhoneException;
-import me.jaeyeopme.sns.domain.user.record.AccountRequest;
+import me.jaeyeopme.sns.domain.user.exception.NotFoundEmailException;
+import me.jaeyeopme.sns.domain.user.exception.NotMatchesPasswordException;
+import me.jaeyeopme.sns.domain.user.record.AccountCreateRequest;
+import me.jaeyeopme.sns.domain.user.record.AccountLoginRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,12 +20,30 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class GeneralAccountService implements AccountService {
 
+    private static final String SESSION_NAME = "USER_IDENTIFIER_ID";
+
     private final UserRepository userRepository;
+
     private final AccountPasswordEncoder encoder;
+
+    @Transactional(readOnly = true)
+    @Override
+    public void login(final AccountLoginRequest request,
+        final HttpSession session) {
+        final User user = userRepository.findByAccountEmailValue(
+                request.email().getValue())
+            .orElseThrow(NotFoundEmailException::new);
+
+        if (!encoder.matches(request.password(), user.getAccount().getPassword())) {
+            throw new NotMatchesPasswordException();
+        }
+
+        session.setAttribute(SESSION_NAME, user.getId());
+    }
 
     @Transactional
     @Override
-    public Long create(final AccountRequest request) {
+    public Long create(final AccountCreateRequest request) {
         verifyDuplicatedEmail(request.email());
         verifyDuplicatedPhone(request.phone());
 

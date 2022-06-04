@@ -21,7 +21,7 @@ import me.jaeyeopme.sns.domain.user.domain.Phone;
 import me.jaeyeopme.sns.domain.user.domain.RawPassword;
 import me.jaeyeopme.sns.domain.user.exception.DuplicateEmailException;
 import me.jaeyeopme.sns.domain.user.exception.DuplicatePhoneException;
-import me.jaeyeopme.sns.domain.user.record.AccountRequest;
+import me.jaeyeopme.sns.domain.user.record.AccountCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +58,7 @@ public class AccountAPITest {
     @Test
     void Given_DuplicatedEmail_When_Creat_Then_HTTP409() throws Exception {
         // GIVEN
-        final var request = new AccountRequest(
+        final var request = new AccountCreateRequest(
             EMAIL.getValue(),
             PHONE.getValue(),
             RAW_PASSWORD.getValue(),
@@ -81,7 +81,7 @@ public class AccountAPITest {
     @Test
     void Given_DuplicatedPhone_When_Creat_Then_HTTP409() throws Exception {
         // GIVEN
-        final var request = new AccountRequest(
+        final var request = new AccountCreateRequest(
             EMAIL.getValue(),
             PHONE.getValue(),
             RAW_PASSWORD.getValue(),
@@ -104,7 +104,7 @@ public class AccountAPITest {
     @Test
     void Given_CorrectInput_When_Create_Then_HTTP201() throws Exception {
         // GIVEN
-        final var request = new AccountRequest(
+        final var request = new AccountCreateRequest(
             EMAIL.getValue(),
             PHONE.getValue(),
             RAW_PASSWORD.getValue(),

@@ -6,6 +6,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(value = HttpStatus.CONFLICT, reason = DuplicateEmailException.REASON)
 public class DuplicateEmailException extends RuntimeException {
 
-    public static final String REASON = "The email address is already taken.";
+    public static final String REASON = "The email address is already exists.";
 
 }

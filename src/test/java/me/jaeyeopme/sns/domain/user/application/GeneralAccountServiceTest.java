@@ -17,7 +17,7 @@ import me.jaeyeopme.sns.domain.user.domain.User;
 import me.jaeyeopme.sns.domain.user.domain.UserRepository;
 import me.jaeyeopme.sns.domain.user.exception.DuplicateEmailException;
 import me.jaeyeopme.sns.domain.user.exception.DuplicatePhoneException;
-import me.jaeyeopme.sns.domain.user.record.AccountRequest;
+import me.jaeyeopme.sns.domain.user.record.AccountCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -53,7 +53,7 @@ class GeneralAccountServiceTest {
     @Test
     void Given_DuplicateEmail_When_Create_Then_ThrowException() {
         // GIVEN
-        final var request = new AccountRequest(EMAIL.getValue(),
+        final var request = new AccountCreateRequest(EMAIL.getValue(),
             PHONE.getValue(),
             RAW_PASSWORD.getValue(),
             NAME, BIO);
@@ -75,7 +75,7 @@ class GeneralAccountServiceTest {
     @Test
     void Given_DuplicatePhone_When_Create_Then_ThrowException() {
         // GIVEN
-        final var request = new AccountRequest(EMAIL.getValue(),
+        final var request = new AccountCreateRequest(EMAIL.getValue(),
             PHONE.getValue(),
             RAW_PASSWORD.getValue(),
             NAME, BIO);
@@ -99,7 +99,7 @@ class GeneralAccountServiceTest {
     @Test
     void Given_CorrectInput_When_Create_Then_User() {
         // GIVEN
-        final var request = new AccountRequest(EMAIL.getValue(),
+        final var request = new AccountCreateRequest(EMAIL.getValue(),
             PHONE.getValue(),
             RAW_PASSWORD.getValue(),
             NAME, BIO);

@@ -6,6 +6,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(value = HttpStatus.CONFLICT, reason = DuplicatePhoneException.REASON)
 public class DuplicatePhoneException extends RuntimeException {
 
-    public static final String REASON = "The phone number is not available.";
+    public static final String REASON = "The phone number is already exists.";
 
 }
