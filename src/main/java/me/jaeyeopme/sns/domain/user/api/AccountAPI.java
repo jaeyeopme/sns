@@ -1,20 +1,17 @@
 package me.jaeyeopme.sns.domain.user.api;
 
 import java.net.URI;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import me.jaeyeopme.sns.domain.user.application.AccountService;
+import me.jaeyeopme.sns.domain.user.application.LoginService;
 import me.jaeyeopme.sns.domain.user.domain.Email;
 import me.jaeyeopme.sns.domain.user.domain.Phone;
 import me.jaeyeopme.sns.domain.user.exception.DuplicateEmailException;
 import me.jaeyeopme.sns.domain.user.exception.DuplicatePhoneException;
 import me.jaeyeopme.sns.domain.user.exception.NotFoundEmailException;
 import me.jaeyeopme.sns.domain.user.exception.NotMatchesPasswordException;
-import me.jaeyeopme.sns.domain.user.record.AccountCreateRequest;
-import me.jaeyeopme.sns.domain.user.record.AccountLoginRequest;
-import org.springframework.http.HttpRequest;
+import me.jaeyeopme.sns.domain.user.record.UserCreateRequest;
+import me.jaeyeopme.sns.domain.user.record.UserLoginRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,7 +19,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.method.HandlerMethod;
 
 @RequestMapping(AccountAPI.ACCOUNT_API_V1)
 @RequiredArgsConstructor
@@ -33,18 +29,18 @@ public class AccountAPI {
 
     private final AccountService accountService;
 
+    private final LoginService loginService;
+
     /**
      * 로그인 API
      *
      * @param request 로그인 대상 정보
-     * @param session 로그인 대상의 세션
-     * @throws NotFoundEmailException 이메일이 존재하지 않는 경우
+     * @throws NotFoundEmailException      이메일이 존재하지 않는 경우
      * @throws NotMatchesPasswordException 비밀번호가 일치하지 않은 경우
      */
     @PostMapping("/login")
-    public ResponseEntity<Void> login(@RequestBody final AccountLoginRequest request,
-        final HttpSession session) {
-        accountService.login(request, session);
+    public ResponseEntity<Void> login(@RequestBody final UserLoginRequest request) {
+        loginService.login(request);
         return ResponseEntity.ok().build();
     }
 
@@ -52,12 +48,11 @@ public class AccountAPI {
      * 회원 가입 API
      *
      * @param request 회원 가입 대상 정보
-     *
      * @throws DuplicateEmailException 이메일이 중복되는 경우
      * @throws DuplicatePhoneException 전화번호가 중복되는 경우
      */
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody final AccountCreateRequest request) {
+    public ResponseEntity<Void> create(@RequestBody final UserCreateRequest request) {
         final var userId = accountService.create(request);
         final var location = URI.create("%s/%s".formatted(ACCOUNT_API_V1, userId));
 

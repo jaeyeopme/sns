@@ -1,16 +1,12 @@
 package me.jaeyeopme.sns.domain.user.application;
 
-import javax.servlet.http.HttpSession;
 import me.jaeyeopme.sns.domain.user.domain.Email;
 import me.jaeyeopme.sns.domain.user.domain.Phone;
-import me.jaeyeopme.sns.domain.user.record.AccountCreateRequest;
-import me.jaeyeopme.sns.domain.user.record.AccountLoginRequest;
+import me.jaeyeopme.sns.domain.user.record.UserCreateRequest;
 
 public interface AccountService {
 
-    void login(AccountLoginRequest request, HttpSession session);
-
-    Long create(AccountCreateRequest request);
+    Long create(UserCreateRequest request);
 
     void verifyDuplicatedEmail(Email email);
 

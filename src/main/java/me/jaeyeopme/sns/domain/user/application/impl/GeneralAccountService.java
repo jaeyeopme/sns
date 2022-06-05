@@ -1,7 +1,8 @@
-package me.jaeyeopme.sns.domain.user.application;
+package me.jaeyeopme.sns.domain.user.application.impl;
 
-import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import me.jaeyeopme.sns.domain.user.application.AccountService;
+import me.jaeyeopme.sns.domain.user.application.PasswordEncryptor;
 import me.jaeyeopme.sns.domain.user.domain.Account;
 import me.jaeyeopme.sns.domain.user.domain.Email;
 import me.jaeyeopme.sns.domain.user.domain.Phone;
@@ -9,10 +10,7 @@ import me.jaeyeopme.sns.domain.user.domain.User;
 import me.jaeyeopme.sns.domain.user.domain.UserRepository;
 import me.jaeyeopme.sns.domain.user.exception.DuplicateEmailException;
 import me.jaeyeopme.sns.domain.user.exception.DuplicatePhoneException;
-import me.jaeyeopme.sns.domain.user.exception.NotFoundEmailException;
-import me.jaeyeopme.sns.domain.user.exception.NotMatchesPasswordException;
-import me.jaeyeopme.sns.domain.user.record.AccountCreateRequest;
-import me.jaeyeopme.sns.domain.user.record.AccountLoginRequest;
+import me.jaeyeopme.sns.domain.user.record.UserCreateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,34 +18,17 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class GeneralAccountService implements AccountService {
 
-    private static final String SESSION_NAME = "USER_IDENTIFIER_ID";
-
     private final UserRepository userRepository;
 
-    private final AccountPasswordEncoder encoder;
-
-    @Transactional(readOnly = true)
-    @Override
-    public void login(final AccountLoginRequest request,
-        final HttpSession session) {
-        final User user = userRepository.findByAccountEmailValue(
-                request.email().getValue())
-            .orElseThrow(NotFoundEmailException::new);
-
-        if (!encoder.matches(request.password(), user.getAccount().getPassword())) {
-            throw new NotMatchesPasswordException();
-        }
-
-        session.setAttribute(SESSION_NAME, user.getId());
-    }
+    private final PasswordEncryptor encryptor;
 
     @Transactional
     @Override
-    public Long create(final AccountCreateRequest request) {
+    public Long create(final UserCreateRequest request) {
         verifyDuplicatedEmail(request.email());
         verifyDuplicatedPhone(request.phone());
 
-        final var encodedPassword = encoder.encode(request.password());
+        final var encodedPassword = encryptor.encode(request.password());
         return userRepository.save(User.of(Account.of(request, encodedPassword))).getId();
     }
 

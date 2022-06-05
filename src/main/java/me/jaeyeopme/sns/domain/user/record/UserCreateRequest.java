@@ -5,10 +5,10 @@ import me.jaeyeopme.sns.domain.user.domain.Name;
 import me.jaeyeopme.sns.domain.user.domain.Phone;
 import me.jaeyeopme.sns.domain.user.domain.RawPassword;
 
-public record AccountCreateRequest(Email email, Phone phone, RawPassword password,
-                                   Name name, String bio) {
+public record UserCreateRequest(Email email, Phone phone, RawPassword password,
+                                Name name, String bio) {
 
-    public AccountCreateRequest(final String email, final String phone, final CharSequence password,
+    public UserCreateRequest(final String email, final String phone, final CharSequence password,
         final String name, final String bio) {
         this(Email.of(email), Phone.of(phone), RawPassword.of(password), Name.of(name), bio);
     }
