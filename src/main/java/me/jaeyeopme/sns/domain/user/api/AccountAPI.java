@@ -12,6 +12,7 @@ import me.jaeyeopme.sns.domain.user.exception.NotFoundEmailException;
 import me.jaeyeopme.sns.domain.user.exception.NotMatchesPasswordException;
 import me.jaeyeopme.sns.domain.user.record.UserCreateRequest;
 import me.jaeyeopme.sns.domain.user.record.UserLoginRequest;
+import me.jaeyeopme.sns.global.aop.LoginRequired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,7 +30,17 @@ public class AccountAPI {
 
     private final AccountService accountService;
 
-    private final LoginService loginService;
+    private final LoginService sessionLoginService;
+
+    /**
+     * 로그아웃
+     */
+    @LoginRequired
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout() {
+        sessionLoginService.logout();
+        return ResponseEntity.ok().build();
+    }
 
     /**
      * 로그인 API
@@ -40,7 +51,7 @@ public class AccountAPI {
      */
     @PostMapping("/login")
     public ResponseEntity<Void> login(@RequestBody final UserLoginRequest request) {
-        loginService.login(request);
+        sessionLoginService.login(request);
         return ResponseEntity.ok().build();
     }
 

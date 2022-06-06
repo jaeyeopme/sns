@@ -38,4 +38,9 @@ public class SessionLoginService implements LoginService {
         session.setAttribute(SESSION_NAME, user.getId());
     }
 
+    @Override
+    public void logout() {
+        session.invalidate();
+    }
+
 }

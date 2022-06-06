@@ -51,16 +51,21 @@ public class AccountAPITest {
     private LoginService loginService;
 
     @SneakyThrows
-    private ResultActions performPost(final String urlTemplate, final Object content) {
+    private ResultActions performPost(final String urlTemplate,
+        final Object content) {
         return mockMvc.perform(
-            post(ACCOUNT_API_V1 + urlTemplate).contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(content))).andDo(print());
+                post(ACCOUNT_API_V1 + urlTemplate)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(content)))
+            .andDo(print());
     }
 
-    private ResultActions performGet(final String urlTemplate, final Object... uriVar)
-        throws Exception {
+    @SneakyThrows
+    private ResultActions performGet(final String urlTemplate,
+        final Object... uriVar) {
         return mockMvc.perform(
-                get(ACCOUNT_API_V1 + urlTemplate, uriVar).characterEncoding(StandardCharsets.UTF_8))
+                get(ACCOUNT_API_V1 + urlTemplate, uriVar)
+                    .characterEncoding(StandardCharsets.UTF_8))
             .andDo(print());
     }
 
@@ -115,6 +120,31 @@ public class AccountAPITest {
             // THEN
             when.andExpectAll(status().isOk());
             then(loginService).should(only()).login(request);
+        }
+
+    }
+
+    @DisplayName("로그아웃 시")
+    @Nested
+    public class When_Logout {
+
+        @SneakyThrows
+        @DisplayName("로그인을 한 경우 성공하고 HTTP 200을 반환한다.")
+        @Test
+        void Given_ValidAuthentication_When_Logout_Then_HTTP200() {
+            // GIVEN
+//        final var session = new MockHttpSession();
+//        session.setAttribute(SessionLoginService.SESSION_NAME, 1L);
+//        session.setAttribute("test", 2L);
+//        willCallRealMethod().given(loginService).logout();
+
+            // WHEN
+            final var when = mockMvc.perform(post(ACCOUNT_API_V1 + "/logout"))
+                .andDo(print());
+
+            // THEN
+            when.andExpectAll(status().isOk());
+            then(loginService).should(only()).logout();
         }
 
     }
