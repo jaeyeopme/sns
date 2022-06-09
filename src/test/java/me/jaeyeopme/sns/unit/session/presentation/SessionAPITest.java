@@ -1,4 +1,4 @@
-package me.jaeyeopme.sns.unit.user.presentation;
+package me.jaeyeopme.sns.unit.session.presentation;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
@@ -17,7 +17,7 @@ import me.jaeyeopme.sns.common.exception.NotFoundEmailException;
 import me.jaeyeopme.sns.common.exception.NotMatchesPasswordException;
 import me.jaeyeopme.sns.session.application.SessionFacade;
 import me.jaeyeopme.sns.session.presentation.SessionAPI;
-import me.jaeyeopme.sns.support.fixture.UserFixture;
+import me.jaeyeopme.sns.support.user.fixture.UserFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -66,7 +66,7 @@ public class SessionAPITest {
         @SneakyThrows
         @DisplayName("이메일이 존재하지 않은 경우 실패하고 HTTP 404를 반환한다.")
         @Test
-        void Given_NotExistsEmail_When_Create_Then_HTTP404() {
+        void Given_NotExistsEmail_Then_HTTP404() {
             // GIVEN
             final var request = UserFixture.SESSION_CREATE_REQUEST;
             willThrow(NotFoundEmailException.class).given(sessionFacade).create(request);
@@ -83,7 +83,7 @@ public class SessionAPITest {
         @SneakyThrows
         @DisplayName("비밀번호가 일치하지 않은 경우 실패하고 HTTP 401을 반환한다.")
         @Test
-        void Given_NotMatchesPassword_When_Create_Then_HTTP401() {
+        void Given_NotMatchedPassword_Then_HTTP401() {
             // GIVEN
             final var request = UserFixture.SESSION_CREATE_REQUEST;
             willThrow(NotMatchesPasswordException.class).given(sessionFacade).create(request);
@@ -101,7 +101,7 @@ public class SessionAPITest {
         @SneakyThrows
         @DisplayName("입력 값이 올바른 경우 HTTP 200을 반환한다.")
         @Test
-        void Given_CorrectInput_When_Create_Then_HTTP200() {
+        void Given_CorrectInput_Then_HTTP200() {
             // GIVEN
             final var request = UserFixture.SESSION_CREATE_REQUEST;
 
@@ -122,9 +122,8 @@ public class SessionAPITest {
         @SneakyThrows
         @DisplayName("유효하지 않은 세션인 경우 실패하고 HTTP 401을 반환한다.")
         @Test
-        void Given_InValidSession_When_Invalidate_Then_HTTP401() {
+        void Given_InValidSession_Then_HTTP401() {
             // GIVEN
-            final var account = UserFixture.ACCOUNT;
             willThrow(InvalidSessionException.class).given(sessionFacade).getAccount();
 
             // WHEN
@@ -138,8 +137,8 @@ public class SessionAPITest {
         @SneakyThrows
         @DisplayName("유효한 세션인 경우 성공하고 HTTP 200을 반환한다.")
         @Test
-        void Given_ValidSession_When_Invalidate_Then_HTTP200() {
-            // GIVEN - Aspect - Test
+        void Given_ValidSession_Then_HTTP200() {
+            // GIVEN
             final var principal = UserFixture.PRINCIPAL;
             given(sessionFacade.getAccount()).willReturn(principal);
 

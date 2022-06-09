@@ -1,4 +1,4 @@
-package me.jaeyeopme.sns.unit.user.application;
+package me.jaeyeopme.sns.unit.session.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -10,7 +10,7 @@ import static org.mockito.Mockito.only;
 import me.jaeyeopme.sns.common.exception.InvalidSessionException;
 import me.jaeyeopme.sns.session.application.service.GeneralSessionService;
 import me.jaeyeopme.sns.session.domain.repository.SessionRepository;
-import me.jaeyeopme.sns.support.fixture.UserFixture;
+import me.jaeyeopme.sns.support.user.fixture.UserFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -35,7 +35,7 @@ class GeneralSessionServiceTest {
 
         @DisplayName("세션을 저장한다.")
         @Test
-        void When_Create_Then_ReturnAccount() {
+        void Then_ReturnPrincipal() {
             // GIVEN
             final var principal = UserFixture.PRINCIPAL;
 
@@ -54,9 +54,7 @@ class GeneralSessionServiceTest {
 
         @DisplayName("유효한 세션인 경우 성공한다.")
         @Test
-        void Given_ValidSession_When_Invalidate_Then_DoNothing() {
-            // GIVEN
-
+        void Given_ValidSession_Then_DoNothing() {
             // WHEN
             sessionService.invalidate();
 
@@ -68,13 +66,12 @@ class GeneralSessionServiceTest {
 
     @DisplayName("세션 조회 시")
     @Nested
-    public class When_GetInfo {
+    public class When_GetPrincipal {
 
         @DisplayName("유효하지 않은 세션인 경우 실패한다.")
         @Test
-        void Given_InvalidSession_When_GetInfo_Then_ThrowException() {
+        void Given_InvalidSession_Then_ThrowException() {
             // GIVEN
-            final var account = UserFixture.ACCOUNT;
             willThrow(InvalidSessionException.class).given(sessionRepository).getPrincipal();
 
             // WHEN
@@ -87,7 +84,7 @@ class GeneralSessionServiceTest {
 
         @DisplayName("유효한 세션인 경우 성공한다.")
         @Test
-        void Given_ValidSession_When_GetInfo_Then_ReturnAccount() {
+        void Given_ValidSession_Then_ReturnPrincipal() {
             // GIVEN
             final var expected = UserFixture.PRINCIPAL;
             given(sessionRepository.getPrincipal()).willReturn(expected);

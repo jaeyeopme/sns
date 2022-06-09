@@ -15,7 +15,7 @@ import java.nio.charset.StandardCharsets;
 import lombok.SneakyThrows;
 import me.jaeyeopme.sns.common.exception.DuplicateEmailException;
 import me.jaeyeopme.sns.common.exception.DuplicatePhoneException;
-import me.jaeyeopme.sns.support.fixture.UserFixture;
+import me.jaeyeopme.sns.support.user.fixture.UserFixture;
 import me.jaeyeopme.sns.user.application.UserFacade;
 import me.jaeyeopme.sns.user.presentation.UserAPI;
 import org.junit.jupiter.api.DisplayName;
@@ -66,7 +66,7 @@ public class UserAPITest {
         @SneakyThrows
         @DisplayName("이메일이 중복되는 경우 실패하고 HTTP 409를 반환한다.")
         @Test
-        void Given_DuplicatedEmail_When_Creat_Then_HTTP409() {
+        void Given_DuplicatedEmail_Then_HTTP409() {
             // GIVEN
             final var request = UserFixture.USER_CREATE_REQUEST;
             willThrow(new DuplicateEmailException()).given(userFacade).create(request);
@@ -83,7 +83,7 @@ public class UserAPITest {
         @SneakyThrows
         @DisplayName("전화번호가 중복되는 경우 실패하고 HTTP 409를 반환한다.")
         @Test
-        void Given_DuplicatedPhone_When_Creat_Then_HTTP409() {
+        void Given_DuplicatedPhone_Then_HTTP409() {
             // GIVEN
             final var request = UserFixture.USER_CREATE_REQUEST;
             willThrow(new DuplicatePhoneException()).given(userFacade).create(request);
@@ -100,7 +100,7 @@ public class UserAPITest {
         @SneakyThrows
         @DisplayName("입력 값이 올바른 경우 성공하고 HTTP 201을 반환한다.")
         @Test
-        void Given_CorrectInput_When_Create_Then_HTTP201() {
+        void Given_CorrectInput_Then_HTTP201() {
             // GIVEN
             final var request = UserFixture.USER_CREATE_REQUEST;
             given(userFacade.create(request)).willReturn(1L);
@@ -123,33 +123,35 @@ public class UserAPITest {
         @SneakyThrows
         @DisplayName("중복되는 경우 실패하고 HTTP 409를 반환한다.")
         @Test
-        void Given_CorrectInput_When_VerifyDuplicatedEmail_Then_HTTP409() {
+        void Given_DuplicatedEmail_Then_HTTP409() {
             // GIVEN
-            final var email = UserFixture.EMAIL;
-            willThrow(DuplicateEmailException.class).given(userFacade).verifyDuplicatedEmail(email);
+            final var request = UserFixture.EMAIL_REQUEST;
+            willThrow(DuplicateEmailException.class).given(userFacade)
+                .verifyDuplicatedEmail(request);
 
             // WHEN
-            final var when = performGet("/email/{email}", email.value());
+            final var when = performGet("/email/{email}", request.email());
 
             // THEN
             when.andExpectAll(status().isConflict(),
                 status().reason(DuplicateEmailException.REASON));
-            then(userFacade).should(only()).verifyDuplicatedEmail(email);
+            then(userFacade).should(only())
+                .verifyDuplicatedEmail(request);
         }
 
         @SneakyThrows
         @DisplayName("중복되지 않은 경우 성공하고 HTTP 200을 반환한다.")
         @Test
-        void Given_CorrectInput_When_VerifyDuplicatedEmail_Then_HTTP200() {
+        void Given_NotDuplicatedEmail_Then_HTTP200() {
             // GIVEN
-            final var email = UserFixture.EMAIL;
+            final var request = UserFixture.EMAIL_REQUEST;
 
             // WHEN
-            final var when = performGet("/email/{email}", email.value());
+            final var when = performGet("/email/{email}", request.email());
 
             // THEN
             when.andExpectAll(status().isOk());
-            then(userFacade).should(only()).verifyDuplicatedEmail(email);
+            then(userFacade).should(only()).verifyDuplicatedEmail(request);
         }
 
     }
@@ -161,33 +163,34 @@ public class UserAPITest {
         @SneakyThrows
         @DisplayName("중복되는 경우 실패하고 HTTP 409를 반환한다.")
         @Test
-        void Given_CorrectInput_When_ExistsEmail_Then_HTTP409() {
+        void Given_DuplicatedPhone_Then_HTTP409() {
             // GIVEN
-            final var phone = UserFixture.PHONE;
-            willThrow(DuplicatePhoneException.class).given(userFacade).verifyDuplicatedPhone(phone);
+            final var request = UserFixture.PHONE_REQUEST;
+            willThrow(DuplicatePhoneException.class).given(userFacade)
+                .verifyDuplicatedPhone(request);
 
             // WHEN
-            final var when = performGet("/phone/{phone}", phone.value());
+            final var when = performGet("/phone/{phone}", request.phone());
 
             // THEN
             when.andExpectAll(status().isConflict(),
                 status().reason(DuplicatePhoneException.REASON));
-            then(userFacade).should(only()).verifyDuplicatedPhone(phone);
+            then(userFacade).should(only()).verifyDuplicatedPhone(request);
         }
 
         @SneakyThrows
         @DisplayName("중복되지 않은 경우 성공하고 HTTP 200을 반환한다.")
         @Test
-        void Given_CorrectInput_When_VerifyDuplicatedPhone_Then_HTTP200() {
+        void Given_NotDuplicatedPhone_Then_HTTP200() {
             // GIVEN
-            final var phone = UserFixture.PHONE;
+            final var request = UserFixture.PHONE_REQUEST;
 
             // WHEN
-            final var when = performGet("/phone/{phone}", phone.value());
+            final var when = performGet("/phone/{phone}", request.phone());
 
             // THEN
             when.andExpectAll(status().isOk());
-            then(userFacade).should(only()).verifyDuplicatedPhone(phone);
+            then(userFacade).should(only()).verifyDuplicatedPhone(request);
         }
 
     }

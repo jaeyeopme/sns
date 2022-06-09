@@ -11,7 +11,7 @@ import java.util.Optional;
 import me.jaeyeopme.sns.common.exception.DuplicateEmailException;
 import me.jaeyeopme.sns.common.exception.DuplicatePhoneException;
 import me.jaeyeopme.sns.common.exception.NotFoundEmailException;
-import me.jaeyeopme.sns.support.fixture.UserFixture;
+import me.jaeyeopme.sns.support.user.fixture.UserFixture;
 import me.jaeyeopme.sns.user.application.service.GeneralUserService;
 import me.jaeyeopme.sns.user.domain.User;
 import me.jaeyeopme.sns.user.domain.repository.UserRepository;
@@ -59,6 +59,43 @@ class GeneralUserServiceTest {
 
     }
 
+    @DisplayName("이메일 조회 시")
+    @Nested
+    public class When_findByEmail {
+
+        @DisplayName("이메일이 존재하지 않은 경우 실패한다.")
+        @Test
+        void Given_NotExistsEmail_Then_ThrowException() {
+            // GIVEN
+            final var email = UserFixture.EMAIL;
+            given(userRepository.findByEmail(email)).willReturn(Optional.empty());
+
+            // WHEN
+            final Executable when = () -> userService.findByEmail(email);
+
+            // THEN
+            assertThrows(NotFoundEmailException.class, when);
+            then(userRepository).should(only()).findByEmail(email);
+        }
+
+        @DisplayName("이메일이 존재하는 경우 성공한다.")
+        @Test
+        void Given_ExistsEmail_Then_ReturnUser() {
+            // GIVEN
+            final var expected = UserFixture.USER;
+            given(userRepository.findByEmail(expected.account().email()))
+                .willReturn(Optional.of(expected));
+
+            // WHEN
+            final var actual = userService.findByEmail(expected.account().email());
+
+            // THEN
+            assertThat(actual).isEqualTo(expected);
+            then(userRepository).should(only()).findByEmail(expected.account().email());
+        }
+
+    }
+
     @DisplayName("이메일 중복 검사 시")
     @Nested
     public class When_VerifyDuplicatedEmail {
@@ -96,49 +133,13 @@ class GeneralUserServiceTest {
 
     }
 
-    @DisplayName("이메일 조회 시")
-    @Nested
-    public class When_findByEmail {
-
-        @DisplayName("이메일이 존재하지 않은 경우 실패한다.")
-        @Test
-        void Given_NotExistsEmail_Then_ThrowException() {
-            // GIVEN
-            final var email = UserFixture.EMAIL;
-            given(userRepository.findByEmail(email)).willReturn(Optional.empty());
-
-            // WHEN
-            final Executable when = () -> userService.findByEmail(email);
-
-            // THEN
-            assertThrows(NotFoundEmailException.class, when);
-            then(userRepository).should(only()).findByEmail(email);
-        }
-
-        @DisplayName("이메일이 존재하는 경우 성공한다.")
-        @Test
-        void Given_ExistsEmail_Then_ReturnUser() {
-            // GIVEN
-            final var expected = UserFixture.USER;
-            given(userRepository.findByEmail(expected.account().email()))
-                .willReturn(Optional.of(expected));
-
-            // WHEN
-            final var actual = userService.findByEmail(expected.account().email());
-
-            assertThat(actual).isEqualTo(expected);
-            then(userRepository).should(only()).findByEmail(expected.account().email());
-        }
-
-    }
-
     @DisplayName("전화번호 중복 검사 시")
     @Nested
     public class When_VerifyDuplicatedPhone {
 
         @DisplayName("중복되는 경우 실패한다.")
         @Test
-        void Given_DuplicatedPhone_When_VerifyDuplicatedPhone_Then_ThrowException() {
+        void Given_DuplicatedPhone_Then_ThrowException() {
             // GIVEN
             final var phone = UserFixture.PHONE;
             given(userRepository.existsByPhone(phone))
@@ -154,7 +155,7 @@ class GeneralUserServiceTest {
 
         @DisplayName("중복되지 않은 경우 성공한다.")
         @Test
-        void Given_NotDuplicatedPhone_When_VerifyDuplicatedPhone_Then_DoNothing() {
+        void Given_NotDuplicatedPhone_Then_DoNothing() {
             // GIVEN
             final var phone = UserFixture.PHONE;
             given(userRepository.existsByPhone(phone))

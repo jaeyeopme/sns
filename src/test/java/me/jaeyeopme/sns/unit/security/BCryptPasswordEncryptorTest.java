@@ -1,4 +1,4 @@
-package me.jaeyeopme.sns.unit.user.common.security;
+package me.jaeyeopme.sns.unit.security;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -38,8 +38,8 @@ class BCryptPasswordEncryptorTest {
     void matches() {
         // GIVEN
         final var rawPassword1 = RawPassword.of("password1234");
-        final var rawPassword2 = RawPassword.of("1234password");
         final var encodedPassword1 = encryptor.encode(rawPassword1);
+        final var rawPassword2 = RawPassword.of("1234password");
         final var encodedPassword2 = encryptor.encode(rawPassword2);
 
         // WHEN

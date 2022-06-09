@@ -7,6 +7,8 @@ import me.jaeyeopme.sns.user.application.service.UserService;
 import me.jaeyeopme.sns.user.domain.Account;
 import me.jaeyeopme.sns.user.domain.Email;
 import me.jaeyeopme.sns.user.domain.Phone;
+import me.jaeyeopme.sns.user.presentation.dto.EmailRequest;
+import me.jaeyeopme.sns.user.presentation.dto.PhoneRequest;
 import me.jaeyeopme.sns.user.presentation.dto.UserCreateRequest;
 import org.springframework.stereotype.Service;
 
@@ -22,20 +24,20 @@ public class UserFacade {
         final var account = Account.of(request);
         final var rawPassword = RawPassword.of(request.password());
 
-        verifyDuplicatedEmail(account.email());
-        verifyDuplicatedPhone(account.phone());
+        userService.verifyDuplicatedEmail(account.email());
+        userService.verifyDuplicatedPhone(account.phone());
 
         account.password(passwordEncryptor.encode(rawPassword));
-        
+
         return userService.create(account);
     }
 
-    public void verifyDuplicatedEmail(final Email email) {
-        userService.verifyDuplicatedEmail(email);
+    public void verifyDuplicatedEmail(final EmailRequest request) {
+        userService.verifyDuplicatedEmail(Email.of(request.email()));
     }
 
-    public void verifyDuplicatedPhone(final Phone phone) {
-        userService.verifyDuplicatedPhone(phone);
+    public void verifyDuplicatedPhone(final PhoneRequest request) {
+        userService.verifyDuplicatedPhone(Phone.of(request.phone()));
     }
 
 }

@@ -1,4 +1,4 @@
-package me.jaeyeopme.sns.unit.user.domain;
+package me.jaeyeopme.sns.unit.security.dto;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;

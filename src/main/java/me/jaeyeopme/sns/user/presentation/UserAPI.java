@@ -5,8 +5,6 @@ import lombok.RequiredArgsConstructor;
 import me.jaeyeopme.sns.common.exception.DuplicateEmailException;
 import me.jaeyeopme.sns.common.exception.DuplicatePhoneException;
 import me.jaeyeopme.sns.user.application.UserFacade;
-import me.jaeyeopme.sns.user.domain.Email;
-import me.jaeyeopme.sns.user.domain.Phone;
 import me.jaeyeopme.sns.user.presentation.dto.EmailRequest;
 import me.jaeyeopme.sns.user.presentation.dto.PhoneRequest;
 import me.jaeyeopme.sns.user.presentation.dto.UserCreateRequest;
@@ -50,7 +48,7 @@ public class UserAPI {
      */
     @GetMapping("/email/{email}")
     public ResponseEntity<Void> existsByEmail(@PathVariable("email") EmailRequest request) {
-        userFacade.verifyDuplicatedEmail(Email.of(request.email()));
+        userFacade.verifyDuplicatedEmail(request);
         return ResponseEntity.ok().build();
     }
 
@@ -62,7 +60,7 @@ public class UserAPI {
      */
     @GetMapping("/phone/{phone}")
     public ResponseEntity<Void> existsByEmail(@PathVariable("phone") PhoneRequest request) {
-        userFacade.verifyDuplicatedPhone(Phone.of(request.phone()));
+        userFacade.verifyDuplicatedPhone(request);
         return ResponseEntity.ok().build();
     }
 
