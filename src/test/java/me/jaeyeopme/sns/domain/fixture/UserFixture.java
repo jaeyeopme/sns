@@ -8,8 +8,8 @@ import me.jaeyeopme.sns.domain.user.domain.Name;
 import me.jaeyeopme.sns.domain.user.domain.Phone;
 import me.jaeyeopme.sns.domain.user.domain.RawPassword;
 import me.jaeyeopme.sns.domain.user.domain.User;
+import me.jaeyeopme.sns.domain.user.record.SessionCreateRequest;
 import me.jaeyeopme.sns.domain.user.record.UserCreateRequest;
-import me.jaeyeopme.sns.domain.user.record.UserLoginRequest;
 
 public class UserFixture {
 
@@ -26,7 +26,7 @@ public class UserFixture {
 
     public final static String BIO = "bio";
 
-    public final static UserLoginRequest USER_LOGIN_REQUEST = new UserLoginRequest(
+    public final static SessionCreateRequest SESSION_CREATE_REQUEST = new SessionCreateRequest(
         EMAIL,
         RAW_PASSWORD);
 

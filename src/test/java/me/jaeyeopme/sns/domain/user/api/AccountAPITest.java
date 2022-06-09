@@ -1,9 +1,7 @@
 package me.jaeyeopme.sns.domain.user.api;
 
-import static me.jaeyeopme.sns.domain.user.api.AccountAPI.ACCOUNT_API_V1;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.only;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -17,13 +15,8 @@ import java.nio.charset.StandardCharsets;
 import lombok.SneakyThrows;
 import me.jaeyeopme.sns.domain.fixture.UserFixture;
 import me.jaeyeopme.sns.domain.user.application.AccountService;
-import me.jaeyeopme.sns.domain.user.application.LoginService;
 import me.jaeyeopme.sns.domain.user.exception.DuplicateEmailException;
 import me.jaeyeopme.sns.domain.user.exception.DuplicatePhoneException;
-import me.jaeyeopme.sns.domain.user.exception.NotFoundEmailException;
-import me.jaeyeopme.sns.domain.user.exception.NotMatchesPasswordException;
-import me.jaeyeopme.sns.domain.user.record.UserLoginRequest;
-import org.apache.logging.log4j.util.Strings;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -47,14 +40,10 @@ public class AccountAPITest {
     @MockBean
     private AccountService accountService;
 
-    @MockBean
-    private LoginService loginService;
-
     @SneakyThrows
-    private ResultActions performPost(final String urlTemplate,
-        final Object content) {
+    private ResultActions performPost(final Object content) {
         return mockMvc.perform(
-                post(ACCOUNT_API_V1 + urlTemplate)
+                post(AccountAPI.V1)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(content)))
             .andDo(print());
@@ -64,89 +53,9 @@ public class AccountAPITest {
     private ResultActions performGet(final String urlTemplate,
         final Object... uriVar) {
         return mockMvc.perform(
-                get(ACCOUNT_API_V1 + urlTemplate, uriVar)
+                get(AccountAPI.V1 + urlTemplate, uriVar)
                     .characterEncoding(StandardCharsets.UTF_8))
             .andDo(print());
-    }
-
-    @DisplayName("로그인을 시")
-    @Nested
-    public class When_Login {
-
-        @SneakyThrows
-        @DisplayName("이메일이 존재하지 않은 경우 실패하고 HTTP 404를 반환한다.")
-        @Test
-        void Given_NotExistsEmail_When_Login_Then_HTTP404() {
-            // GIVEN
-            final var request = new UserLoginRequest(UserFixture.EMAIL, UserFixture.RAW_PASSWORD);
-            willThrow(NotFoundEmailException.class).given(loginService).login(request);
-
-            // WHEN
-            final var when = performPost("/login", request);
-
-            // THEN
-            when.andExpectAll(status().isNotFound(),
-                status().reason(NotFoundEmailException.REASON));
-            then(loginService).should(only()).login(request);
-        }
-
-        @SneakyThrows
-        @DisplayName("비밀번호가 일치하지 않은 경우 실패하고 HTTP 401을 반환한다.")
-        @Test
-        void Given_NotMatchesPassword_When_Login_Then_HTTP401() {
-            // GIVEN
-            final var request = new UserLoginRequest(UserFixture.EMAIL, UserFixture.RAW_PASSWORD);
-            willThrow(NotMatchesPasswordException.class).given(loginService).login(request);
-
-            // WHEN
-            final var when = performPost("/login", request);
-
-            // THEN
-            when.andExpectAll(status().isUnauthorized(),
-                status().reason(NotMatchesPasswordException.REASON));
-            then(loginService).should(only()).login(request);
-        }
-
-        @SneakyThrows
-        @DisplayName("입력 값이 올바른 경우 HTTP 200을 반환한다.")
-        @Test
-        void Given_CorrectInput_When_Login_Then_HTTP200() {
-            // GIVEN
-            final var request = new UserLoginRequest(UserFixture.EMAIL, UserFixture.RAW_PASSWORD);
-
-            // WHEN
-            final var when = performPost("/login", request);
-
-            // THEN
-            when.andExpectAll(status().isOk());
-            then(loginService).should(only()).login(request);
-        }
-
-    }
-
-    @DisplayName("로그아웃 시")
-    @Nested
-    public class When_Logout {
-
-        @SneakyThrows
-        @DisplayName("로그인을 한 경우 성공하고 HTTP 200을 반환한다.")
-        @Test
-        void Given_ValidAuthentication_When_Logout_Then_HTTP200() {
-            // GIVEN
-//        final var session = new MockHttpSession();
-//        session.setAttribute(SessionLoginService.SESSION_NAME, 1L);
-//        session.setAttribute("test", 2L);
-//        willCallRealMethod().given(loginService).logout();
-
-            // WHEN
-            final var when = mockMvc.perform(post(ACCOUNT_API_V1 + "/logout"))
-                .andDo(print());
-
-            // THEN
-            when.andExpectAll(status().isOk());
-            then(loginService).should(only()).logout();
-        }
-
     }
 
     @DisplayName("회원 가입 시")
@@ -163,7 +72,7 @@ public class AccountAPITest {
             given(accountService.create(request)).willThrow(new DuplicateEmailException());
 
             // WHEN
-            final var when = performPost(Strings.EMPTY, request);
+            final var when = performPost(request);
 
             // THEN
             when.andExpectAll(status().isConflict(),
@@ -181,7 +90,7 @@ public class AccountAPITest {
                 new DuplicatePhoneException());
 
             // WHEN
-            final var when = performPost(Strings.EMPTY, request);
+            final var when = performPost(request);
 
             // THEN
             when.andExpectAll(status().isConflict(),
@@ -199,11 +108,11 @@ public class AccountAPITest {
             given(accountService.create(request)).willReturn(1L);
 
             // WHEN
-            final var when = performPost(Strings.EMPTY, request);
+            final var when = performPost(request);
 
             // THEN
             when.andExpectAll(status().isCreated(),
-                header().string(HttpHeaders.LOCATION, "%s/%s".formatted(ACCOUNT_API_V1, 1L)));
+                header().string(HttpHeaders.LOCATION, "%s/%s".formatted(AccountAPI.V1, 1L)));
             then(accountService).should(only()).create(request);
         }
 
@@ -237,7 +146,6 @@ public class AccountAPITest {
         void Given_CorrectInput_When_VerifyDuplicatedEmail_Then_HTTP200() {
             // GIVEN
             final var email = UserFixture.EMAIL;
-            willDoNothing().given(accountService).verifyDuplicatedEmail(email);
 
             // WHEN
             final var when = performGet("/email/{email}", email.getValue());
@@ -277,7 +185,6 @@ public class AccountAPITest {
         void Given_CorrectInput_When_VerifyDuplicatedPhone_Then_HTTP200() {
             // GIVEN
             final var phone = UserFixture.PHONE;
-            willDoNothing().given(accountService).verifyDuplicatedPhone(phone);
 
             // WHEN
             final var when = performGet("/phone/{phone}", phone.getValue());
