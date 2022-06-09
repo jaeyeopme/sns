@@ -3,7 +3,7 @@ package me.jaeyeopme.sns.domain.user.application;
 import me.jaeyeopme.sns.domain.user.domain.EncodedPassword;
 import me.jaeyeopme.sns.domain.user.domain.RawPassword;
 
-public interface AccountPasswordEncoder {
+public interface PasswordEncryptor {
 
     EncodedPassword encode(RawPassword rawPassword);
 

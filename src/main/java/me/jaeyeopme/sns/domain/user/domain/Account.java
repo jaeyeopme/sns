@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import me.jaeyeopme.sns.domain.user.record.AccountRequest;
+import me.jaeyeopme.sns.domain.user.record.UserCreateRequest;
 
 @Getter
 @Builder(access = AccessLevel.PRIVATE)
@@ -35,7 +35,7 @@ public class Account {
     @Column
     private String bio;
 
-    public static Account of(final AccountRequest request,
+    public static Account of(final UserCreateRequest request,
         final EncodedPassword encodedPassword) {
         return Account.builder()
             .email(request.email())

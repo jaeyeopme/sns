@@ -15,7 +15,7 @@ spring:
     add-properties: false
 
   session:
-    store-type: redis
+    store-type: none
 
   jpa:
     open-in-view: false

@@ -44,6 +44,9 @@ dependencies {
 
     compileOnly "${lombok}"
     annotationProcessor "${lombok}"
+    
+    testCompileOnly "${lombok}"
+    testAnnotationProcessor "${lombok}"
 
     testImplementation "${boot}:${starter}-test"
     testImplementation "${spring}.restdocs:spring-restdocs-mockmvc"

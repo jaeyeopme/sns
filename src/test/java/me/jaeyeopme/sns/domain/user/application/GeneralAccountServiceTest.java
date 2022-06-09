@@ -8,17 +8,16 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.only;
 
+import me.jaeyeopme.sns.domain.fixture.UserFixture;
+import me.jaeyeopme.sns.domain.user.application.impl.GeneralAccountService;
 import me.jaeyeopme.sns.domain.user.domain.Account;
-import me.jaeyeopme.sns.domain.user.domain.Email;
 import me.jaeyeopme.sns.domain.user.domain.EncodedPassword;
-import me.jaeyeopme.sns.domain.user.domain.Phone;
-import me.jaeyeopme.sns.domain.user.domain.RawPassword;
 import me.jaeyeopme.sns.domain.user.domain.User;
 import me.jaeyeopme.sns.domain.user.domain.UserRepository;
 import me.jaeyeopme.sns.domain.user.exception.DuplicateEmailException;
 import me.jaeyeopme.sns.domain.user.exception.DuplicatePhoneException;
-import me.jaeyeopme.sns.domain.user.record.AccountRequest;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
@@ -30,16 +29,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 @ExtendWith(MockitoExtension.class)
 class GeneralAccountServiceTest {
 
-    private final static Email EMAIL = Email.of("email@email.com");
-
-    private final static Phone PHONE = Phone.of("+821012345678");
-
-    private final static RawPassword RAW_PASSWORD = RawPassword.of("password1234");
-
-    private final static String NAME = "name";
-
-    private final static String BIO = "bio";
-
     @InjectMocks
     private GeneralAccountService accountService;
 
@@ -47,152 +36,164 @@ class GeneralAccountServiceTest {
     private UserRepository userRepository;
 
     @Mock
-    private AccountPasswordEncoder encoder;
+    private PasswordEncryptor passwordEncryptor;
 
-    @DisplayName("이메일이 중복되는 경우 회원 가입을 실패 한다.")
-    @Test
-    void Given_DuplicateEmail_When_Create_Then_ThrowException() {
-        // GIVEN
-        final var request = new AccountRequest(EMAIL.getValue(),
-            PHONE.getValue(),
-            RAW_PASSWORD.getValue(),
-            NAME, BIO);
+    @DisplayName("회원 저장 시")
+    @Nested
+    public class When_Save {
 
-        given(userRepository.existsByAccountEmailValue(request.email().getValue()))
-            .willReturn(Boolean.TRUE);
+        @DisplayName("이메일이 중복되는 경우 실패 한다.")
+        @Test
+        void Given_DuplicateEmail_When_Create_Then_ThrowException() {
+            // GIVEN
+            final var request = UserFixture.USER_CREATE_REQUEST;
 
-        // WHEN
-        final Executable when = () -> accountService.create(request);
+            given(userRepository.existsByAccountEmailValue(request.email().getValue()))
+                .willReturn(Boolean.TRUE);
 
-        // THEN
-        assertThrows(DuplicateEmailException.class, when, DuplicateEmailException.REASON);
-        then(userRepository).should().existsByAccountEmailValue(request.email().getValue());
-        then(userRepository).should(never()).existsByAccountPhoneValue(request.phone().getValue());
-        then(userRepository).should(never()).save(any(User.class));
+            // WHEN
+            final Executable when = () -> accountService.create(request);
+
+            // THEN
+            assertThrows(DuplicateEmailException.class, when, DuplicateEmailException.REASON);
+            then(userRepository).should().existsByAccountEmailValue(request.email().getValue());
+            then(userRepository).should(never())
+                .existsByAccountPhoneValue(request.phone().getValue());
+            then(userRepository).should(never()).save(any(User.class));
+        }
+
+        @DisplayName("전화번호가 중복되는 경우 실패 한다.")
+        @Test
+        void Given_DuplicatePhone_When_Create_Then_ThrowException() {
+            // GIVEN
+            final var request = UserFixture.USER_CREATE_REQUEST;
+
+            given(userRepository.existsByAccountEmailValue(request.email().getValue()))
+                .willReturn(Boolean.FALSE);
+            given(userRepository.existsByAccountPhoneValue(request.phone().getValue()))
+                .willReturn(Boolean.TRUE);
+
+            // WHEN
+            final Executable when = () -> accountService.create(request);
+
+            // THEN
+            assertThrows(DuplicatePhoneException.class, when, DuplicatePhoneException.REASON);
+            then(userRepository).should().existsByAccountEmailValue(request.email().getValue());
+            then(userRepository).should().existsByAccountPhoneValue(request.phone().getValue());
+            then(userRepository).should(never()).save(any(User.class));
+        }
+
+        @DisplayName("입력 값이 올바른 경우 저장하고 반환한다.")
+        @Test
+        void Given_CorrectInput_When_Create_Then_SaveAndReturnUser() {
+            // GIVEN
+            final var request = UserFixture.USER_CREATE_REQUEST;
+
+            final var encodedPassword = EncodedPassword.of(
+                request.password().getValue().toString());
+            given(passwordEncryptor.encode(request.password()))
+                .willReturn(encodedPassword);
+
+            final var expected = User.of(Account.of(request, encodedPassword));
+            ReflectionTestUtils.setField(expected, "id", 1L);
+            given(userRepository.save(any(User.class))).willReturn(expected);
+
+            given(userRepository.existsByAccountEmailValue(request.email().getValue()))
+                .willReturn(Boolean.FALSE);
+            given(userRepository.existsByAccountPhoneValue(request.phone().getValue()))
+                .willReturn(Boolean.FALSE);
+
+            // WHEN
+            final var actual = accountService.create(request);
+
+            // THEN
+            assertThat(actual).isEqualTo(expected.getId());
+            then(userRepository).should()
+                .existsByAccountEmailValue(request.email().getValue());
+            then(userRepository).should()
+                .existsByAccountPhoneValue(request.phone().getValue());
+            then(userRepository).should()
+                .save(any(User.class));
+        }
+
     }
 
-    @DisplayName("전화번호가 중복되는 경우 회원 가입을 실패 한다.")
-    @Test
-    void Given_DuplicatePhone_When_Create_Then_ThrowException() {
-        // GIVEN
-        final var request = new AccountRequest(EMAIL.getValue(),
-            PHONE.getValue(),
-            RAW_PASSWORD.getValue(),
-            NAME, BIO);
+    @DisplayName("이메일 중복 검사 시")
+    @Nested
+    public class When_VerifyDuplicatedEmail {
 
-        given(userRepository.existsByAccountEmailValue(request.email().getValue()))
-            .willReturn(Boolean.FALSE);
-        given(userRepository.existsByAccountPhoneValue(request.phone().getValue()))
-            .willReturn(Boolean.TRUE);
+        @DisplayName("중복되는 경우 실패한다.")
+        @Test
+        void Given_DuplicatedEmail_When_VerifyDuplicatedEmail_Then_ThrowException() {
+            // GIVEN
+            final var email = UserFixture.EMAIL;
+            given(userRepository.existsByAccountEmailValue(email.getValue())).willReturn(
+                Boolean.TRUE);
 
-        // WHEN
-        final Executable when = () -> accountService.create(request);
+            // WHEN
+            final Executable when = () -> accountService.verifyDuplicatedEmail(email);
 
-        // THEN
-        assertThrows(DuplicatePhoneException.class, when, DuplicatePhoneException.REASON);
-        then(userRepository).should().existsByAccountEmailValue(request.email().getValue());
-        then(userRepository).should().existsByAccountPhoneValue(request.phone().getValue());
-        then(userRepository).should(never()).save(any(User.class));
+            // THEN
+            assertThrows(DuplicateEmailException.class, when);
+            then(userRepository).should(only())
+                .existsByAccountEmailValue(email.getValue());
+        }
+
+        @DisplayName("중복되지 않은 경우 성공한다.")
+        @Test
+        void Given_NotDuplicatedEmail_When_VerifyDuplicatedEmail_Then_DoNothing() {
+            // GIVEN
+            final var email = UserFixture.EMAIL;
+            given(userRepository.existsByAccountEmailValue(email.getValue()))
+                .willReturn(Boolean.FALSE);
+
+            // WHEN
+            accountService.verifyDuplicatedEmail(email);
+
+            // THEN
+            then(userRepository).should(only())
+                .existsByAccountEmailValue(email.getValue());
+        }
+
     }
 
-    @DisplayName("회원을 저장하고 반환한다.")
-    @Test
-    void Given_CorrectInput_When_Create_Then_User() {
-        // GIVEN
-        final var request = new AccountRequest(EMAIL.getValue(),
-            PHONE.getValue(),
-            RAW_PASSWORD.getValue(),
-            NAME, BIO);
+    @DisplayName("전화번호 중복 검사 시")
+    @Nested
+    public class When_VerifyDuplicatedPhone {
 
-        final var encodedPassword = EncodedPassword.of(RAW_PASSWORD.getValue().toString());
-        given(encoder.encode(RAW_PASSWORD))
-            .willReturn(encodedPassword);
+        @DisplayName("중복되는 경우 실패한다.")
+        @Test
+        void Given_DuplicatedPhone_When_VerifyDuplicatedPhone_Then_ThrowException() {
+            // GIVEN
+            final var phone = UserFixture.PHONE;
+            given(userRepository.existsByAccountPhoneValue(phone.getValue()))
+                .willReturn(Boolean.TRUE);
 
-        final var expected = User.of(Account.of(request, encodedPassword));
-        ReflectionTestUtils.setField(expected, "id", 1L);
-        given(userRepository.save(any(User.class))).willReturn(expected);
+            // WHEN
+            final Executable when = () -> accountService.verifyDuplicatedPhone(phone);
 
-        given(userRepository.existsByAccountEmailValue(request.email().getValue()))
-            .willReturn(Boolean.FALSE);
-        given(userRepository.existsByAccountPhoneValue(request.phone().getValue()))
-            .willReturn(Boolean.FALSE);
+            // THEN
+            assertThrows(DuplicatePhoneException.class, when);
+            then(userRepository).should(only())
+                .existsByAccountPhoneValue(phone.getValue());
+        }
 
-        // WHEN
-        final var actual = accountService.create(request);
+        @DisplayName("중복되지 않은 경우 성공한다.")
+        @Test
+        void Given_NotDuplicatedPhone_When_VerifyDuplicatedPhone_Then_DoNothing() {
+            // GIVEN
+            final var phone = UserFixture.PHONE;
+            given(userRepository.existsByAccountPhoneValue(phone.getValue()))
+                .willReturn(Boolean.FALSE);
 
-        // THEN
-        assertThat(actual).isEqualTo(expected.getId());
-        then(userRepository).should()
-            .existsByAccountEmailValue(request.email().getValue());
-        then(userRepository).should()
-            .existsByAccountPhoneValue(request.phone().getValue());
-        then(userRepository).should()
-            .save(any(User.class));
-    }
+            // WHEN
+            accountService.verifyDuplicatedPhone(phone);
 
-    @DisplayName("이메일이 중복되는 경우 중복검사에 실패한다.")
-    @Test
-    void Given_DuplicatedEmail_When_VerifyDuplicatedEmail_Then_ThrowException() {
-        // GIVEN
-        final var email = EMAIL;
-        given(userRepository.existsByAccountEmailValue(email.getValue())).willReturn(Boolean.TRUE);
+            // THEN
+            then(userRepository).should(only())
+                .existsByAccountPhoneValue(phone.getValue());
+        }
 
-        // WHEN
-        final Executable when = () -> accountService.verifyDuplicatedEmail(email);
-
-        // THEN
-        assertThrows(DuplicateEmailException.class, when);
-        then(userRepository).should(only())
-            .existsByAccountEmailValue(email.getValue());
-    }
-
-    @DisplayName("이메일이 중복되지 않은 경우 중복검사에 성공한다.")
-    @Test
-    void Given_NotDuplicatedEmail_When_VerifyDuplicatedEmail_Then_DoNothing() {
-        // GIVEN
-        final var email = EMAIL;
-        given(userRepository.existsByAccountEmailValue(email.getValue()))
-            .willReturn(Boolean.FALSE);
-
-        // WHEN
-        accountService.verifyDuplicatedEmail(email);
-
-        // THEN
-        then(userRepository).should(only())
-            .existsByAccountEmailValue(email.getValue());
-    }
-
-    @DisplayName("전화번호가 중복되는 경우 중복검사에 실패한다.")
-    @Test
-    void Given_DuplicatedPhone_When_VerifyDuplicatedPhone_Then_ThrowException() {
-        // GIVEN
-        final var phone = PHONE;
-        given(userRepository.existsByAccountPhoneValue(phone.getValue()))
-            .willReturn(Boolean.TRUE);
-
-        // WHEN
-        final Executable when = () -> accountService.verifyDuplicatedPhone(phone);
-
-        // THEN
-        assertThrows(DuplicatePhoneException.class, when);
-        then(userRepository).should(only())
-            .existsByAccountPhoneValue(phone.getValue());
-    }
-
-    @DisplayName("전화번호가 중복되지 않은 경우 중복검사에 성공한다.")
-    @Test
-    void Given_NotDuplicatedPhone_When_VerifyDuplicatedPhone_Then_DoNothing() {
-        // GIVEN
-        final var phone = PHONE;
-        given(userRepository.existsByAccountPhoneValue(phone.getValue()))
-            .willReturn(Boolean.FALSE);
-
-        // WHEN
-        accountService.verifyDuplicatedPhone(phone);
-
-        // THEN
-        then(userRepository).should(only())
-            .existsByAccountPhoneValue(phone.getValue());
     }
 
 }

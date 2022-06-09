@@ -1,6 +1,8 @@
-package me.jaeyeopme.sns.domain.user.application;
+package me.jaeyeopme.sns.domain.user.application.impl;
 
 import lombok.RequiredArgsConstructor;
+import me.jaeyeopme.sns.domain.user.application.AccountService;
+import me.jaeyeopme.sns.domain.user.application.PasswordEncryptor;
 import me.jaeyeopme.sns.domain.user.domain.Account;
 import me.jaeyeopme.sns.domain.user.domain.Email;
 import me.jaeyeopme.sns.domain.user.domain.Phone;
@@ -8,7 +10,7 @@ import me.jaeyeopme.sns.domain.user.domain.User;
 import me.jaeyeopme.sns.domain.user.domain.UserRepository;
 import me.jaeyeopme.sns.domain.user.exception.DuplicateEmailException;
 import me.jaeyeopme.sns.domain.user.exception.DuplicatePhoneException;
-import me.jaeyeopme.sns.domain.user.record.AccountRequest;
+import me.jaeyeopme.sns.domain.user.record.UserCreateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,15 +19,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class GeneralAccountService implements AccountService {
 
     private final UserRepository userRepository;
-    private final AccountPasswordEncoder encoder;
+
+    private final PasswordEncryptor encryptor;
 
     @Transactional
     @Override
-    public Long create(final AccountRequest request) {
+    public Long create(final UserCreateRequest request) {
         verifyDuplicatedEmail(request.email());
         verifyDuplicatedPhone(request.phone());
 
-        final var encodedPassword = encoder.encode(request.password());
+        final var encodedPassword = encryptor.encode(request.password());
         return userRepository.save(User.of(Account.of(request, encodedPassword))).getId();
     }
 

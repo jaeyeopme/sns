@@ -7,7 +7,7 @@ import me.jaeyeopme.sns.domain.user.domain.Email;
 import me.jaeyeopme.sns.domain.user.domain.Phone;
 import me.jaeyeopme.sns.domain.user.exception.DuplicateEmailException;
 import me.jaeyeopme.sns.domain.user.exception.DuplicatePhoneException;
-import me.jaeyeopme.sns.domain.user.record.AccountRequest;
+import me.jaeyeopme.sns.domain.user.record.UserCreateRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,12 +16,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RequestMapping(AccountAPI.ACCOUNT_API_V1)
+@RequestMapping(AccountAPI.V1)
 @RequiredArgsConstructor
 @RestController
 public class AccountAPI {
 
-    public static final String ACCOUNT_API_V1 = "/api/v1/accounts";
+    public static final String V1 = "/v1/accounts";
 
     private final AccountService accountService;
 
@@ -29,14 +29,13 @@ public class AccountAPI {
      * 회원 가입 API
      *
      * @param request 회원 가입 대상 정보
-     * @return 가입한 회원의 식별자
      * @throws DuplicateEmailException 이메일이 중복되는 경우
      * @throws DuplicatePhoneException 전화번호가 중복되는 경우
      */
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody final AccountRequest request) {
+    public ResponseEntity<Void> create(@RequestBody final UserCreateRequest request) {
         final var userId = accountService.create(request);
-        final var location = URI.create("%s/%s".formatted(ACCOUNT_API_V1, userId));
+        final var location = URI.create("%s/%s".formatted(V1, userId));
 
         return ResponseEntity.created(location).build();
     }
