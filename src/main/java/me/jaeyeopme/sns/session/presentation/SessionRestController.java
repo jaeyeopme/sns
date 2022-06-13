@@ -6,6 +6,7 @@ import me.jaeyeopme.sns.common.exception.NotFoundEmailException;
 import me.jaeyeopme.sns.common.exception.NotMatchesPasswordException;
 import me.jaeyeopme.sns.session.application.SessionFacade;
 import me.jaeyeopme.sns.session.presentation.dto.SessionCreateRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,12 +14,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RequestMapping(SessionAPI.V1)
+@RequestMapping(SessionRestController.URL)
 @RequiredArgsConstructor
 @RestController
-public class SessionAPI {
+public class SessionRestController {
 
-    public static final String V1 = "/v1/session";
+    public static final String URL = "/api/v1/session";
 
     private final SessionFacade sessionFacade;
 
@@ -30,9 +31,9 @@ public class SessionAPI {
      * @throws NotMatchesPasswordException 비밀번호가 일치하지 않은 경우
      */
     @PostMapping
-    public ResponseEntity<Void> login(@RequestBody final SessionCreateRequest request) {
+    public ResponseEntity<Void> create(@RequestBody final SessionCreateRequest request) {
         sessionFacade.create(request);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     /**
@@ -40,7 +41,7 @@ public class SessionAPI {
      */
     @SessionRequired
     @DeleteMapping
-    public ResponseEntity<Void> logout() {
+    public ResponseEntity<Void> invalidate() {
         sessionFacade.invalidate();
         return ResponseEntity.ok().build();
     }

@@ -5,6 +5,7 @@ import me.jaeyeopme.sns.common.security.dto.RawPassword;
 import me.jaeyeopme.sns.session.domain.Principal;
 import me.jaeyeopme.sns.session.presentation.dto.SessionCreateRequest;
 import me.jaeyeopme.sns.user.domain.Account;
+import me.jaeyeopme.sns.user.domain.Bio;
 import me.jaeyeopme.sns.user.domain.Email;
 import me.jaeyeopme.sns.user.domain.Name;
 import me.jaeyeopme.sns.user.domain.Phone;
@@ -19,11 +20,11 @@ public class UserFixture {
 
     public final static Phone PHONE = Phone.of("+821012345678");
 
-    public final static RawPassword RAW_PASSWORD = RawPassword.of("rawPassword1234");
+    public final static RawPassword RAW_PASSWORD = RawPassword.of("password1234");
 
     public final static Name NAME = Name.of("name");
 
-    public final static String BIO = "bio";
+    public final static Bio BIO = Bio.of("bio");
 
     public final static SessionCreateRequest SESSION_CREATE_REQUEST = new SessionCreateRequest(
         EMAIL.value(),
@@ -34,7 +35,7 @@ public class UserFixture {
         PHONE.value(),
         RAW_PASSWORD.value().toString(),
         NAME.value(),
-        BIO);
+        BIO.value());
 
     public final static Account ACCOUNT = Account.of(USER_CREATE_REQUEST);
 

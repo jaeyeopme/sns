@@ -1,0 +1,32 @@
+= SNS API
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+:docinfo: shared-head
+
+== Overview
+
+include::overview.adoc[]
+
+=== User API
+
+==== 회원 가입
+
+===== 회원 가입 성공
+
+operation::user_rest_controller_test/회원_가입_성공[snippets='http-request,request-fields,http-response']
+
+===== 회원 가입 실패
+
+이메일이 중복된 경우 실패합니다.
+
+operation::user_rest_controller_test/회원_가입_실패_이메일이_중복되는_경우[snippets='http-response']
+
+전화번호가 중복된 경우 실패합니다.
+
+operation::user_rest_controller_test/회원_가입_실패_전화번호_중복되는_경우[snippets='http-response']
+
+---
