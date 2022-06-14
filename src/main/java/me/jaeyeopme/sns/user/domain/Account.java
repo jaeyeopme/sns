@@ -31,12 +31,12 @@ public class Account {
     @Embedded
     private Name name;
 
-    @Column
-    private String photo;
-
-    @Column
+    @Embedded
     private Bio bio;
 
+    @Column
+    private String photo;
+    
     public static Account of(final UserCreateRequest request) {
         return Account.builder()
             .email(Email.of(request.email()))
