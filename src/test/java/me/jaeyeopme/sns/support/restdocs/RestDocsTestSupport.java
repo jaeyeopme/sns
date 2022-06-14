@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDoc
 import org.springframework.context.annotation.Import;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
+import org.springframework.restdocs.snippet.Snippet;
 
 @Disabled
 @Import(RestDocsConfig.class)
@@ -17,6 +18,10 @@ import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 public abstract class RestDocsTestSupport extends RestControllerTest {
 
     @Autowired
-    protected RestDocumentationResultHandler restDocumentationResultHandler;
+    private RestDocumentationResultHandler restDocumentationResultHandler;
+
+    protected RestDocumentationResultHandler document(Snippet... snippets) {
+        return restDocumentationResultHandler.document(snippets);
+    }
 
 }

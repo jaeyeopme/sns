@@ -11,15 +11,15 @@
 
 include::overview.adoc[]
 
-=== User API
+== User API
 
-==== 회원 가입
+=== 회원 가입
 
-===== 회원 가입 성공
+==== 회원 가입 성공
 
 operation::user_rest_controller_test/회원_가입_성공[snippets='http-request,request-fields,http-response']
 
-===== 회원 가입 실패
+==== 회원 가입 실패
 
 이메일이 중복된 경우 실패합니다.
 
@@ -29,4 +29,56 @@ operation::user_rest_controller_test/회원_가입_실패_이메일이_중복되
 
 operation::user_rest_controller_test/회원_가입_실패_전화번호_중복되는_경우[snippets='http-response']
 
+=== 중복 검사
+
+==== 이메일 중복 검사 성공
+
+operation::user_rest_controller_test/이메일_중복검사_성공[snippets='http-request,http-response']
+
+==== 이메일 중복 검사 실패
+
+이메일이 중복된 경우 실패합니다.
+
+operation::user_rest_controller_test/이메일_중복검사_실패[snippets='http-response']
+
+==== 전화번호 중복 검사 성공
+
+operation::user_rest_controller_test/전화번호_중복검사_성공[snippets='http-request,http-response']
+
+==== 전화번호 중복 검사 실패
+
+전화번호가 중복된 경우 실패합니다.
+
+operation::user_rest_controller_test/전화번호_중복검사_실패[snippets='http-response']
+
 ---
+
+== Session API
+
+=== 세션 생성 (로그인)
+
+==== 로그인 성공
+
+operation::session_rest_controller_test/세션_생성_성공[snippets='http-request,request-fields,http-response']
+
+==== 로그인 실패
+
+이메일이 존재하지 않은 경우 실패합니다.
+
+operation::session_rest_controller_test/세션_생성_실패_이메일이_존재하지_않은_경우[snippets='http-response']
+
+비밀번호가 일치하지 않은 경우 실패합니다.
+
+operation::session_rest_controller_test/세션_생성_실패_비밀번호가_일치하지_않은_경우[snippets='http-response']
+
+=== 세션 만료 (로그아웃)
+
+==== 로그아웃 성공
+
+operation::session_rest_controller_test/세션_만료_성공[snippets='http-request,request-headers,http-response']
+
+==== 로그아웃 실패
+
+세션이 유효하지 않은 경우 실패합니다.
+
+operation::session_rest_controller_test/세션_만료_실패_유효하지_않은_세션인_경우[snippets='http-response']

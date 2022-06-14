@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class SessionRestController {
 
-    public static final String URL = "/api/v1/session";
+    public static final String URL = "/api/v1/sessions";
 
     private final SessionFacade sessionFacade;
 

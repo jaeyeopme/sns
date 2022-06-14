@@ -3,13 +3,18 @@ package me.jaeyeopme.sns.unit.user.presentation;
 import static me.jaeyeopme.sns.config.RestDocsConfig.field;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.only;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.nio.charset.StandardCharsets;
 import lombok.SneakyThrows;
 import me.jaeyeopme.sns.common.exception.DuplicateEmailException;
 import me.jaeyeopme.sns.common.exception.DuplicatePhoneException;
@@ -19,12 +24,13 @@ import me.jaeyeopme.sns.user.presentation.UserRestController;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 
 public class UserRestControllerTest extends RestDocsTestSupport {
 
     @SneakyThrows
-    @DisplayName("이메일이 중복되는 경우 실패하고 HTTP 409를 반환한다.")
+    @DisplayName("회원 가입 시 이메일이 중복되는 경우 실패하고 HTTP 409를 반환한다.")
     @Test
     void 회원_가입_실패_이메일이_중복되는_경우() {
         // GIVEN
@@ -32,7 +38,11 @@ public class UserRestControllerTest extends RestDocsTestSupport {
         willThrow(new DuplicateEmailException()).given(userFacade).create(request);
 
         // WHEN
-        final var when = performPost(UserRestController.URL, request);
+        final var when = mockMvc.perform(
+                post(UserRestController.URL)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(createJson(request)))
+            .andDo(print());
 
         // THEN
         when.andExpectAll(status().isConflict(),
@@ -41,7 +51,7 @@ public class UserRestControllerTest extends RestDocsTestSupport {
     }
 
     @SneakyThrows
-    @DisplayName("전화번호가 중복되는 경우 실패하고 HTTP 409를 반환한다.")
+    @DisplayName("회원 가입 시 전화번호가 중복되는 경우 실패하고 HTTP 409를 반환한다.")
     @Test
     void 회원_가입_실패_전화번호_중복되는_경우() {
         // GIVEN
@@ -49,7 +59,11 @@ public class UserRestControllerTest extends RestDocsTestSupport {
         willThrow(new DuplicatePhoneException()).given(userFacade).create(request);
 
         // WHEN
-        final var when = performPost(UserRestController.URL, request);
+        final var when = mockMvc.perform(
+                post(UserRestController.URL)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(createJson(request)))
+            .andDo(print());
 
         // THEN
         when.andExpectAll(status().isConflict(),
@@ -58,7 +72,7 @@ public class UserRestControllerTest extends RestDocsTestSupport {
     }
 
     @SneakyThrows
-    @DisplayName("입력 값이 올바른 경우 성공하고 HTTP 201을 반환한다.")
+    @DisplayName("회원 가입 시 입력 값이 올바른 경우 성공하고 HTTP 201을 반환한다.")
     @Test
     void 회원_가입_성공() {
         // GIVEN
@@ -66,7 +80,11 @@ public class UserRestControllerTest extends RestDocsTestSupport {
         given(userFacade.create(request)).willReturn(1L);
 
         // WHEN
-        final var when = performPost(UserRestController.URL, request);
+        final var when = mockMvc.perform(
+                post(UserRestController.URL)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(createJson(request)))
+            .andDo(print());
 
         // THEN
         when.andExpectAll(status().isCreated(),
@@ -75,7 +93,7 @@ public class UserRestControllerTest extends RestDocsTestSupport {
         then(userFacade).should(only()).create(request);
 
         // DOCS
-        when.andDo(restDocumentationResultHandler.document(
+        when.andDo(document(
             requestFields(
                 fieldWithPath("email").type(JsonFieldType.STRING).description("이메일")
                     .attributes(field("constraints", "이메일 형식")),
@@ -93,7 +111,7 @@ public class UserRestControllerTest extends RestDocsTestSupport {
     }
 
     @SneakyThrows
-    @DisplayName("중복되는 경우 실패하고 HTTP 409를 반환한다.")
+    @DisplayName("이메일이 중복되는 경우 실패하고 HTTP 409를 반환한다.")
     @Test
     void 이메일_중복검사_실패() {
         // GIVEN
@@ -102,8 +120,10 @@ public class UserRestControllerTest extends RestDocsTestSupport {
             .verifyDuplicatedEmail(request);
 
         // WHEN
-        final var when = performGet(
-            UserRestController.URL + "/email/{email}", request.email());
+        final var when = mockMvc.perform(
+                get(UserRestController.URL + "/email/{email}", request.email())
+                    .characterEncoding(StandardCharsets.UTF_8))
+            .andDo(print());
 
         // THEN
         when.andExpectAll(status().isConflict(),
@@ -113,15 +133,18 @@ public class UserRestControllerTest extends RestDocsTestSupport {
     }
 
     @SneakyThrows
-    @DisplayName("중복되지 않은 경우 성공하고 HTTP 200을 반환한다.")
+    @DisplayName("이메일이 중복되지 않은 경우 성공하고 HTTP 200을 반환한다.")
     @Test
     void 이메일_중복검사_성공() {
         // GIVEN
         final var request = UserFixture.EMAIL_REQUEST;
+        willDoNothing().given(userFacade).verifyDuplicatedEmail(request);
 
         // WHEN
-        final var when = performGet(
-            UserRestController.URL + "/email/{email}", request.email());
+        final var when = mockMvc.perform(
+                get(UserRestController.URL + "/email/{email}", request.email())
+                    .characterEncoding(StandardCharsets.UTF_8))
+            .andDo(print());
 
         // THEN
         when.andExpectAll(status().isOk());
@@ -129,7 +152,7 @@ public class UserRestControllerTest extends RestDocsTestSupport {
     }
 
     @SneakyThrows
-    @DisplayName("중복되는 경우 실패하고 HTTP 409를 반환한다.")
+    @DisplayName("전화번호가 중복되는 경우 실패하고 HTTP 409를 반환한다.")
     @Test
     void 전화번호_중복검사_실패() {
         // GIVEN
@@ -138,8 +161,10 @@ public class UserRestControllerTest extends RestDocsTestSupport {
             .verifyDuplicatedPhone(request);
 
         // WHEN
-        final var when = performGet(
-            UserRestController.URL + "/phone/{phone}", request.phone());
+        final var when = mockMvc.perform(
+                get(UserRestController.URL + "/phone/{phone}", request.phone())
+                    .characterEncoding(StandardCharsets.UTF_8))
+            .andDo(print());
 
         // THEN
         when.andExpectAll(status().isConflict(),
@@ -148,15 +173,18 @@ public class UserRestControllerTest extends RestDocsTestSupport {
     }
 
     @SneakyThrows
-    @DisplayName("중복되지 않은 경우 성공하고 HTTP 200을 반환한다.")
+    @DisplayName("전화번호가 중복되지 않은 경우 성공하고 HTTP 200을 반환한다.")
     @Test
     void 전화번호_중복검사_성공() {
         // GIVEN
         final var request = UserFixture.PHONE_REQUEST;
+        willDoNothing().given(userFacade).verifyDuplicatedPhone(request);
 
         // WHEN
-        final var when = performGet(
-            UserRestController.URL + "/phone/{phone}", request.phone());
+        final var when = mockMvc.perform(
+                get(UserRestController.URL + "/phone/{phone}", request.phone())
+                    .characterEncoding(StandardCharsets.UTF_8))
+            .andDo(print());
 
         // THEN
         when.andExpectAll(status().isOk());
