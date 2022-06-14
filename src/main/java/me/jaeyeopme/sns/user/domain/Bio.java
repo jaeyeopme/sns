@@ -11,22 +11,22 @@ import org.springframework.util.StringUtils;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Embeddable
-public class Name {
+public class Bio {
 
-    @Column(name = "name", nullable = false, unique = true)
+    @Column(name = "bio")
     private String value;
 
-    private Name(final String value) {
+    private Bio(final String value) {
         verify(value);
         this.value = value;
     }
 
-    public static Name of(final String value) {
-        return new Name(value);
+    public static Bio of(final String value) {
+        return new Bio(value);
     }
 
     private void verify(final String value) {
-        if (!StringUtils.hasText(value) || value.length() > 20) {
+        if (StringUtils.hasText(value) && value.length() > 50) {
             throw new InvalidArgumentException();
         }
     }

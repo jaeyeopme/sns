@@ -16,12 +16,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RequestMapping(UserAPI.V1)
-@RequiredArgsConstructor
+@RequestMapping(UserRestController.URL)
 @RestController
-public class UserAPI {
+@RequiredArgsConstructor
+public class UserRestController {
 
-    public static final String V1 = "/v1/users";
+    public static final String URL = "/api/v1/users";
 
     private final UserFacade userFacade;
 
@@ -35,7 +35,7 @@ public class UserAPI {
     @PostMapping
     public ResponseEntity<Void> create(@RequestBody final UserCreateRequest request) {
         final var userId = userFacade.create(request);
-        final var location = URI.create("%s/%s".formatted(V1, userId));
+        final var location = URI.create("%s/%s".formatted(URL, userId));
 
         return ResponseEntity.created(location).build();
     }

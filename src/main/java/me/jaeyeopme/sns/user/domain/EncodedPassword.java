@@ -15,7 +15,7 @@ public class EncodedPassword {
 
     @Column(name = "password", nullable = false)
     private String value;
-    
+
     public static EncodedPassword of(final String value) {
         return new EncodedPassword(value);
     }

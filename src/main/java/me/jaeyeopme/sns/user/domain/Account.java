@@ -31,18 +31,18 @@ public class Account {
     @Embedded
     private Name name;
 
+    @Embedded
+    private Bio bio;
+
     @Column
     private String photo;
-
-    @Column
-    private String bio;
-
+    
     public static Account of(final UserCreateRequest request) {
         return Account.builder()
             .email(Email.of(request.email()))
             .phone(Phone.of(request.phone()))
             .name(Name.of(request.name()))
-            .bio(request.bio())
+            .bio(Bio.of(request.bio()))
             .build();
     }
 
