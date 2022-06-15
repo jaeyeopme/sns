@@ -1,36 +1,25 @@
 package me.jaeyeopme.sns.common.security.dto;
 
-import java.util.regex.Pattern;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import me.jaeyeopme.sns.common.exception.InvalidArgumentException;
-import org.springframework.util.StringUtils;
 
 @Getter
 @EqualsAndHashCode
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RawPassword {
 
-    private static final Pattern RAW_PASSWORD_PATTERN = Pattern.compile(
-        "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$");
-
+    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$")
+    @NotBlank
     private CharSequence value;
-
-    private RawPassword(final CharSequence value) {
-        verify(value);
-        this.value = value;
-    }
 
     public static RawPassword of(final CharSequence value) {
         return new RawPassword(value);
-    }
-
-    private void verify(final CharSequence value) {
-        if (!StringUtils.hasText(value) || !RAW_PASSWORD_PATTERN.matcher(value).matches()) {
-            throw new InvalidArgumentException();
-        }
     }
 
 }
