@@ -21,17 +21,17 @@ public class GeneralUserRepository implements UserRepository {
 
     @Override
     public Optional<User> findByEmail(final Email email) {
-        return jpaRepository.findByAccountEmailValue(email.value());
+        return jpaRepository.findByEmailValue(email.value());
     }
 
     @Override
     public boolean existsByEmail(final Email email) {
-        return jpaRepository.existsByAccountEmailValue(email.value());
+        return jpaRepository.existsByEmailValue(email.value());
     }
 
     @Override
     public boolean existsByPhone(final Phone phone) {
-        return jpaRepository.existsByAccountPhoneValue(phone.value());
+        return jpaRepository.existsByPhoneValue(phone.value());
     }
 
 }

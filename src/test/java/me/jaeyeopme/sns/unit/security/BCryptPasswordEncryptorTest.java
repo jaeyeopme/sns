@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import me.jaeyeopme.sns.common.exception.NotMatchesPasswordException;
 import me.jaeyeopme.sns.common.security.BCryptPasswordEncryptor;
 import me.jaeyeopme.sns.common.security.PasswordEncryptor;
-import me.jaeyeopme.sns.common.security.dto.RawPassword;
+import me.jaeyeopme.sns.user.presentation.dto.RawPassword;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,7 @@ class BCryptPasswordEncryptorTest {
     @Test
     void encode() {
         // GIVEN
-        final var rawPassword = RawPassword.of("password1234");
+        final var rawPassword = RawPassword.from("password1234");
 
         // WHEN
         final var encodedPassword = encryptor.encode(rawPassword);
@@ -37,9 +37,9 @@ class BCryptPasswordEncryptorTest {
     @Test
     void matches() {
         // GIVEN
-        final var rawPassword1 = RawPassword.of("password1234");
+        final var rawPassword1 = RawPassword.from("password1234");
         final var encodedPassword1 = encryptor.encode(rawPassword1);
-        final var rawPassword2 = RawPassword.of("1234password");
+        final var rawPassword2 = RawPassword.from("1234password");
         final var encodedPassword2 = encryptor.encode(rawPassword2);
 
         // WHEN

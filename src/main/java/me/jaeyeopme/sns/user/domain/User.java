@@ -1,5 +1,6 @@
 package me.jaeyeopme.sns.user.domain;
 
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,6 +11,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import me.jaeyeopme.sns.user.presentation.dto.UserCreateRequest;
 
 @Getter
 @Builder(access = AccessLevel.PRIVATE)
@@ -23,11 +26,30 @@ public class User {
     private Long id;
 
     @Embedded
-    private Account account;
+    private Email email;
 
-    public static User of(final Account account) {
+    @Embedded
+    private Phone phone;
+
+    @Setter
+    @Embedded
+    private EncodedPassword password;
+
+    @Embedded
+    private Name name;
+
+    @Embedded
+    private Bio bio;
+
+    @Column(name = "photo")
+    private String photo;
+
+    public static User of(final UserCreateRequest request) {
         return User.builder()
-            .account(account)
+            .email(request.email())
+            .phone(request.phone())
+            .name(request.name())
+            .bio(request.bio())
             .build();
     }
 

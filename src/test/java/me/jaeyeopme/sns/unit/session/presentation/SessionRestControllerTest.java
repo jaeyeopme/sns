@@ -11,7 +11,6 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import lombok.SneakyThrows;
@@ -19,8 +18,9 @@ import me.jaeyeopme.sns.common.exception.InvalidSessionException;
 import me.jaeyeopme.sns.common.exception.NotFoundEmailException;
 import me.jaeyeopme.sns.common.exception.NotMatchesPasswordException;
 import me.jaeyeopme.sns.session.presentation.SessionRestController;
+import me.jaeyeopme.sns.support.fixture.SessionFixture;
+import me.jaeyeopme.sns.support.fixture.UserFixture;
 import me.jaeyeopme.sns.support.restdocs.RestDocsTestSupport;
-import me.jaeyeopme.sns.support.user.fixture.UserFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
@@ -34,19 +34,17 @@ public class SessionRestControllerTest extends RestDocsTestSupport {
     @Test
     void 세션_생성_실패_이메일이_존재하지_않은_경우() {
         // GIVEN
-        final var request = UserFixture.SESSION_CREATE_REQUEST;
-        willThrow(NotFoundEmailException.class).given(sessionFacade).create(request);
+        final var request = SessionFixture.SESSION_CREATE_REQUEST;
+        willThrow(new NotFoundEmailException()).given(sessionFacade).create(request);
 
         // WHEN
         final var when = mockMvc.perform(
-                post(SessionRestController.URL)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(createJson(request)))
-            .andDo(print());
+            post(SessionRestController.URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(createJson(request)));
 
         // THEN
-        when.andExpectAll(status().isNotFound(),
-            status().reason(NotFoundEmailException.REASON));
+        when.andExpectAll(status().isNotFound());
         then(sessionFacade).should(only()).create(request);
     }
 
@@ -55,20 +53,17 @@ public class SessionRestControllerTest extends RestDocsTestSupport {
     @Test
     void 세션_생성_실패_비밀번호가_일치하지_않은_경우() {
         // GIVEN
-        final var request = UserFixture.SESSION_CREATE_REQUEST;
-        willThrow(NotMatchesPasswordException.class).given(sessionFacade).create(request);
+        final var request = SessionFixture.SESSION_CREATE_REQUEST;
+        willThrow(new NotMatchesPasswordException()).given(sessionFacade).create(request);
 
         // WHEN
         final var when = mockMvc.perform(
-                post(SessionRestController.URL)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(createJson(request)))
-            .andDo(print());
+            post(SessionRestController.URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(createJson(request)));
 
         // THEN
-        when.andExpectAll(status().isUnauthorized(),
-            status().reason(NotMatchesPasswordException.REASON));
-
+        when.andExpectAll(status().isUnauthorized());
         then(sessionFacade).should(only()).create(request);
     }
 
@@ -77,14 +72,13 @@ public class SessionRestControllerTest extends RestDocsTestSupport {
     @Test
     void 세션_생성_성공() {
         // GIVEN
-        final var request = UserFixture.SESSION_CREATE_REQUEST;
+        final var request = SessionFixture.SESSION_CREATE_REQUEST;
 
         // WHEN
         final var when = mockMvc.perform(
-                post(SessionRestController.URL)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(createJson(request)))
-            .andDo(print());
+            post(SessionRestController.URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(createJson(request)));
 
         // THEN
         when.andExpectAll(status().isCreated());
@@ -106,17 +100,16 @@ public class SessionRestControllerTest extends RestDocsTestSupport {
     @Test
     void 세션_만료_실패_유효하지_않은_세션인_경우() {
         // GIVEN
-        willThrow(InvalidSessionException.class).given(sessionFacade).getAccount();
+        willThrow(new InvalidSessionException()).given(sessionFacade).getPrincipal();
 
         // WHEN
         final var when = mockMvc.perform(
-                delete(SessionRestController.URL)
-                    .header(HttpHeaders.COOKIE, "INVALID_SNS_SESSION"))
-            .andDo(print());
+            delete(SessionRestController.URL)
+                .header(HttpHeaders.COOKIE, "INVALID_SNS_SESSION"));
 
         // THEN
         when.andExpectAll(status().isUnauthorized());
-        then(sessionFacade).should(only()).getAccount();
+        then(sessionFacade).should(only()).getPrincipal();
     }
 
     @SneakyThrows
@@ -125,17 +118,16 @@ public class SessionRestControllerTest extends RestDocsTestSupport {
     void 세션_만료_성공() {
         // GIVEN
         final var principal = UserFixture.PRINCIPAL;
-        given(sessionFacade.getAccount()).willReturn(principal);
+        given(sessionFacade.getPrincipal()).willReturn(principal);
 
         // WHEN
         final var when = mockMvc.perform(
-                delete(SessionRestController.URL)
-                    .header(HttpHeaders.COOKIE, "SNS_SESSION"))
-            .andDo(print());
+            delete(SessionRestController.URL)
+                .header(HttpHeaders.COOKIE, "SNS_SESSION"));
 
         // THEN
         when.andExpectAll(status().isOk());
-        then(sessionFacade).should().getAccount();
+        then(sessionFacade).should().getPrincipal();
         then(sessionFacade).should().invalidate();
 
         // DOCS

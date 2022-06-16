@@ -2,13 +2,10 @@ package me.jaeyeopme.sns.user.application;
 
 import lombok.RequiredArgsConstructor;
 import me.jaeyeopme.sns.common.security.PasswordEncryptor;
-import me.jaeyeopme.sns.common.security.dto.RawPassword;
 import me.jaeyeopme.sns.user.application.service.UserService;
-import me.jaeyeopme.sns.user.domain.Account;
 import me.jaeyeopme.sns.user.domain.Email;
 import me.jaeyeopme.sns.user.domain.Phone;
-import me.jaeyeopme.sns.user.presentation.dto.EmailRequest;
-import me.jaeyeopme.sns.user.presentation.dto.PhoneRequest;
+import me.jaeyeopme.sns.user.domain.User;
 import me.jaeyeopme.sns.user.presentation.dto.UserCreateRequest;
 import org.springframework.stereotype.Service;
 
@@ -21,23 +18,21 @@ public class UserFacade {
     private final PasswordEncryptor passwordEncryptor;
 
     public Long create(final UserCreateRequest request) {
-        final var account = Account.of(request);
-        final var rawPassword = RawPassword.of(request.password());
+        userService.verifyDuplicatedEmail(request.email());
+        userService.verifyDuplicatedPhone(request.phone());
 
-        userService.verifyDuplicatedEmail(account.email());
-        userService.verifyDuplicatedPhone(account.phone());
+        final var user = User.of(request);
+        user.password(passwordEncryptor.encode(request.password()));
 
-        account.password(passwordEncryptor.encode(rawPassword));
-
-        return userService.create(account);
+        return userService.create(user);
     }
 
-    public void verifyDuplicatedEmail(final EmailRequest request) {
-        userService.verifyDuplicatedEmail(Email.of(request.email()));
+    public void verifyDuplicatedEmail(final Email email) {
+        userService.verifyDuplicatedEmail(email);
     }
 
-    public void verifyDuplicatedPhone(final PhoneRequest request) {
-        userService.verifyDuplicatedPhone(Phone.of(request.phone()));
+    public void verifyDuplicatedPhone(final Phone phone) {
+        userService.verifyDuplicatedPhone(phone);
     }
 
 }

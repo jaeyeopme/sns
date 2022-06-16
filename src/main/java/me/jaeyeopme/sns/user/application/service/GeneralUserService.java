@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import me.jaeyeopme.sns.common.exception.DuplicateEmailException;
 import me.jaeyeopme.sns.common.exception.DuplicatePhoneException;
 import me.jaeyeopme.sns.common.exception.NotFoundEmailException;
-import me.jaeyeopme.sns.user.domain.Account;
 import me.jaeyeopme.sns.user.domain.Email;
 import me.jaeyeopme.sns.user.domain.Phone;
 import me.jaeyeopme.sns.user.domain.User;
@@ -20,8 +19,8 @@ public class GeneralUserService implements UserService {
 
     @Transactional
     @Override
-    public Long create(final Account account) {
-        return userRepository.create(User.of(account)).id();
+    public Long create(final User user) {
+        return userRepository.create(user).id();
     }
 
     @Transactional(readOnly = true)

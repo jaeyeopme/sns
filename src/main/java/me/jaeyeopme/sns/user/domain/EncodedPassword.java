@@ -2,7 +2,6 @@ package me.jaeyeopme.sns.user.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,7 +13,6 @@ import lombok.NoArgsConstructor;
 @Embeddable
 public class EncodedPassword {
 
-    @NotBlank
     @Column(name = "password", nullable = false)
     private String value;
 

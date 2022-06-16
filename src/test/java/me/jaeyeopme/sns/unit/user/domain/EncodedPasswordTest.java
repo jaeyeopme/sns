@@ -8,9 +8,9 @@ import org.junit.jupiter.api.Test;
 
 class EncodedPasswordTest {
 
-    @DisplayName("비밀번호를 생성한다.")
+    @DisplayName("입력 값이 올바른 경우 생성을 성공한다.")
     @Test
-    void create() {
+    void 입력_값이_올바른_경우_생성_성공() {
         // GIVEN
         final var value = "password1234";
 

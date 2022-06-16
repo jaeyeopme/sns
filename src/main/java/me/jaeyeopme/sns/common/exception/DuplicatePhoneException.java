@@ -1,11 +1,11 @@
 package me.jaeyeopme.sns.common.exception;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import me.jaeyeopme.sns.common.exception.dto.SNSErrorCode;
 
-@ResponseStatus(value = HttpStatus.CONFLICT, reason = DuplicatePhoneException.REASON)
-public class DuplicatePhoneException extends RuntimeException {
+public class DuplicatePhoneException extends SNSException {
 
-    public static final String REASON = "The phone number is already exists.";
+    public DuplicatePhoneException() {
+        super(SNSErrorCode.DUPLICATE_PHONE);
+    }
 
 }

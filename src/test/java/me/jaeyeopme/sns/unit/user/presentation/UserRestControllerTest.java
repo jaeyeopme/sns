@@ -10,7 +10,6 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -18,8 +17,8 @@ import java.nio.charset.StandardCharsets;
 import lombok.SneakyThrows;
 import me.jaeyeopme.sns.common.exception.DuplicateEmailException;
 import me.jaeyeopme.sns.common.exception.DuplicatePhoneException;
+import me.jaeyeopme.sns.support.fixture.UserFixture;
 import me.jaeyeopme.sns.support.restdocs.RestDocsTestSupport;
-import me.jaeyeopme.sns.support.user.fixture.UserFixture;
 import me.jaeyeopme.sns.user.presentation.UserRestController;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,14 +38,12 @@ public class UserRestControllerTest extends RestDocsTestSupport {
 
         // WHEN
         final var when = mockMvc.perform(
-                post(UserRestController.URL)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(createJson(request)))
-            .andDo(print());
+            post(UserRestController.URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(createJson(request)));
 
         // THEN
-        when.andExpectAll(status().isConflict(),
-            status().reason(DuplicateEmailException.REASON));
+        when.andExpectAll(status().isConflict());
         then(userFacade).should(only()).create(request);
     }
 
@@ -60,14 +57,12 @@ public class UserRestControllerTest extends RestDocsTestSupport {
 
         // WHEN
         final var when = mockMvc.perform(
-                post(UserRestController.URL)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(createJson(request)))
-            .andDo(print());
+            post(UserRestController.URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(createJson(request)));
 
         // THEN
-        when.andExpectAll(status().isConflict(),
-            status().reason(DuplicatePhoneException.REASON));
+        when.andExpectAll(status().isConflict());
         then(userFacade).should(only()).create(request);
     }
 
@@ -81,10 +76,9 @@ public class UserRestControllerTest extends RestDocsTestSupport {
 
         // WHEN
         final var when = mockMvc.perform(
-                post(UserRestController.URL)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(createJson(request)))
-            .andDo(print());
+            post(UserRestController.URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(createJson(request)));
 
         // THEN
         when.andExpectAll(status().isCreated(),
@@ -115,21 +109,19 @@ public class UserRestControllerTest extends RestDocsTestSupport {
     @Test
     void 이메일_중복검사_실패() {
         // GIVEN
-        final var request = UserFixture.EMAIL_REQUEST;
-        willThrow(DuplicateEmailException.class).given(userFacade)
-            .verifyDuplicatedEmail(request);
+        final var email = UserFixture.EMAIL;
+        willThrow(new DuplicateEmailException()).given(userFacade)
+            .verifyDuplicatedEmail(email);
 
         // WHEN
         final var when = mockMvc.perform(
-                get(UserRestController.URL + "/email/{email}", request.email())
-                    .characterEncoding(StandardCharsets.UTF_8))
-            .andDo(print());
+            get(UserRestController.URL + "/email/{email}", email.value())
+                .characterEncoding(StandardCharsets.UTF_8));
 
         // THEN
-        when.andExpectAll(status().isConflict(),
-            status().reason(DuplicateEmailException.REASON));
+        when.andExpectAll(status().isConflict());
         then(userFacade).should(only())
-            .verifyDuplicatedEmail(request);
+            .verifyDuplicatedEmail(email);
     }
 
     @SneakyThrows
@@ -137,18 +129,17 @@ public class UserRestControllerTest extends RestDocsTestSupport {
     @Test
     void 이메일_중복검사_성공() {
         // GIVEN
-        final var request = UserFixture.EMAIL_REQUEST;
-        willDoNothing().given(userFacade).verifyDuplicatedEmail(request);
+        final var email = UserFixture.EMAIL;
+        willDoNothing().given(userFacade).verifyDuplicatedEmail(email);
 
         // WHEN
         final var when = mockMvc.perform(
-                get(UserRestController.URL + "/email/{email}", request.email())
-                    .characterEncoding(StandardCharsets.UTF_8))
-            .andDo(print());
+            get(UserRestController.URL + "/email/{email}", email.value())
+                .characterEncoding(StandardCharsets.UTF_8));
 
         // THEN
         when.andExpectAll(status().isOk());
-        then(userFacade).should(only()).verifyDuplicatedEmail(request);
+        then(userFacade).should(only()).verifyDuplicatedEmail(email);
     }
 
     @SneakyThrows
@@ -156,20 +147,18 @@ public class UserRestControllerTest extends RestDocsTestSupport {
     @Test
     void 전화번호_중복검사_실패() {
         // GIVEN
-        final var request = UserFixture.PHONE_REQUEST;
-        willThrow(DuplicatePhoneException.class).given(userFacade)
-            .verifyDuplicatedPhone(request);
+        final var phone = UserFixture.PHONE;
+        willThrow(new DuplicatePhoneException()).given(userFacade)
+            .verifyDuplicatedPhone(phone);
 
         // WHEN
         final var when = mockMvc.perform(
-                get(UserRestController.URL + "/phone/{phone}", request.phone())
-                    .characterEncoding(StandardCharsets.UTF_8))
-            .andDo(print());
+            get(UserRestController.URL + "/phone/{phone}", phone.value())
+                .characterEncoding(StandardCharsets.UTF_8));
 
         // THEN
-        when.andExpectAll(status().isConflict(),
-            status().reason(DuplicatePhoneException.REASON));
-        then(userFacade).should(only()).verifyDuplicatedPhone(request);
+        when.andExpectAll(status().isConflict());
+        then(userFacade).should(only()).verifyDuplicatedPhone(phone);
     }
 
     @SneakyThrows
@@ -177,18 +166,17 @@ public class UserRestControllerTest extends RestDocsTestSupport {
     @Test
     void 전화번호_중복검사_성공() {
         // GIVEN
-        final var request = UserFixture.PHONE_REQUEST;
-        willDoNothing().given(userFacade).verifyDuplicatedPhone(request);
+        final var phone = UserFixture.PHONE;
+        willDoNothing().given(userFacade).verifyDuplicatedPhone(phone);
 
         // WHEN
         final var when = mockMvc.perform(
-                get(UserRestController.URL + "/phone/{phone}", request.phone())
-                    .characterEncoding(StandardCharsets.UTF_8))
-            .andDo(print());
+            get(UserRestController.URL + "/phone/{phone}", phone.value())
+                .characterEncoding(StandardCharsets.UTF_8));
 
         // THEN
         when.andExpectAll(status().isOk());
-        then(userFacade).should(only()).verifyDuplicatedPhone(request);
+        then(userFacade).should(only()).verifyDuplicatedPhone(phone);
     }
 
 }
