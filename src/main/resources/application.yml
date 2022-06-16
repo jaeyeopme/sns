@@ -22,3 +22,7 @@ spring:
     properties:
       hibernate:
         globally_quoted_identifiers: true
+
+  jackson:
+    visibility:
+      field: any
