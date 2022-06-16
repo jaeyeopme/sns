@@ -4,12 +4,14 @@ import static me.jaeyeopme.sns.config.RestDocsConfig.field;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willThrow;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.only;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -18,9 +20,12 @@ import me.jaeyeopme.sns.common.exception.InvalidSessionException;
 import me.jaeyeopme.sns.common.exception.NotFoundEmailException;
 import me.jaeyeopme.sns.common.exception.NotMatchesPasswordException;
 import me.jaeyeopme.sns.session.presentation.SessionRestController;
+import me.jaeyeopme.sns.session.presentation.dto.SessionCreateRequest;
 import me.jaeyeopme.sns.support.fixture.SessionFixture;
 import me.jaeyeopme.sns.support.fixture.UserFixture;
 import me.jaeyeopme.sns.support.restdocs.RestDocsTestSupport;
+import me.jaeyeopme.sns.user.domain.Email;
+import me.jaeyeopme.sns.user.presentation.dto.RawPassword;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
@@ -91,6 +96,48 @@ public class SessionRestControllerTest extends RestDocsTestSupport {
                     .attributes(field("constraints", "이메일 형식")),
                 fieldWithPath("password").type(JsonFieldType.STRING).description("비밀번호")
                     .attributes(field("constraints", "최소 8자, 최소 하나의 문자 및 하나의 숫자"))
+            )
+        ));
+    }
+
+    @SneakyThrows
+    @DisplayName("세션 생성 시 입력 값이 올바르지 않은 경우 HTTP 400을 반환한다.")
+    @Test
+    void 세션_생성_실패_입력_값이_올바르지_않은_경우() {
+        // GIVEN
+        final var email = Email.from("wrong email");
+        final var password = RawPassword.from("wrong password");
+        final var request = new SessionCreateRequest(email, password);
+
+        // WHEN
+        final var when = mockMvc.perform(
+            post(SessionRestController.URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(createJson(request)));
+
+        // THEN
+        when.andExpectAll(status().isBadRequest());
+        then(sessionFacade).should(never()).create(request);
+
+        // DOCS
+        when.andDo(document(
+            responseFields(
+                fieldWithPath("result").type(JsonFieldType.STRING)
+                    .description("성공 SUCCESS, 실패 FAILURE"),
+                fieldWithPath("data").type(JsonFieldType.STRING)
+                    .description("성공 반환 데이터").optional(),
+                fieldWithPath("code").type(JsonFieldType.STRING)
+                    .description("서버 정의 에러 코드").optional(),
+                fieldWithPath("reason").type(JsonFieldType.STRING)
+                    .description("에러 메시지").optional(),
+                fieldWithPath("errors").type(JsonFieldType.ARRAY)
+                    .description("필드 바인딩 에러").optional(),
+                fieldWithPath("errors[].field").type(JsonFieldType.STRING)
+                    .description("필드 이름").optional(),
+                fieldWithPath("errors[].value").type(JsonFieldType.STRING)
+                    .description("필드 값").optional(),
+                fieldWithPath("errors[].reason").type(JsonFieldType.STRING)
+                    .description("필드 에러 메시지").optional()
             )
         ));
     }

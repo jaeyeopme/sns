@@ -28,3 +28,17 @@
 | `500 Internal Server Error`
 | 서버 에러
 |===
+
+=== 공통 응답 코드 예시
+
+operation::session_rest_controller_test/세션_생성_실패_입력_값이_올바르지_않은_경우[snippets='http-response,response-fields']
+
+==== SUCCESS
+
+요청이 정상적으로 동작한 것으로 `data` 값을 확인해주세요.
+
+==== FAILURE
+
+요청이 실패한 것으로 `code` 와 `reason` 값을 확인 해주세요.
+
+**Field Binding** 에러라면 `errors` 값을 확인해주세요.
