@@ -1,11 +1,11 @@
 package me.jaeyeopme.sns.common.exception;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import me.jaeyeopme.sns.common.exception.dto.SNSErrorCode;
 
-@ResponseStatus(value = HttpStatus.UNAUTHORIZED, reason = InvalidSessionException.REASON)
-public class InvalidSessionException extends RuntimeException {
+public class InvalidSessionException extends SNSException {
 
-    public static final String REASON = "This request requires a login.";
+    public InvalidSessionException() {
+        super(SNSErrorCode.INVALID_SESSION);
+    }
 
 }

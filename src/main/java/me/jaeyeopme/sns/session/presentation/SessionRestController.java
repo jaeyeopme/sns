@@ -1,12 +1,13 @@
 package me.jaeyeopme.sns.session.presentation;
 
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import me.jaeyeopme.sns.common.aop.SessionRequired;
+import me.jaeyeopme.sns.common.annotation.SessionRequired;
 import me.jaeyeopme.sns.common.exception.NotFoundEmailException;
 import me.jaeyeopme.sns.common.exception.NotMatchesPasswordException;
+import me.jaeyeopme.sns.common.exception.dto.SNSResponse;
 import me.jaeyeopme.sns.session.application.SessionFacade;
 import me.jaeyeopme.sns.session.presentation.dto.SessionCreateRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,9 +32,10 @@ public class SessionRestController {
      * @throws NotMatchesPasswordException 비밀번호가 일치하지 않은 경우
      */
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody final SessionCreateRequest request) {
+    public ResponseEntity<SNSResponse<Void>> create(
+        @RequestBody @Valid final SessionCreateRequest request) {
         sessionFacade.create(request);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return SNSResponse.create();
     }
 
     /**
@@ -41,9 +43,9 @@ public class SessionRestController {
      */
     @SessionRequired
     @DeleteMapping
-    public ResponseEntity<Void> invalidate() {
+    public ResponseEntity<SNSResponse<Void>> invalidate() {
         sessionFacade.invalidate();
-        return ResponseEntity.ok().build();
+        return SNSResponse.ok();
     }
 
 }

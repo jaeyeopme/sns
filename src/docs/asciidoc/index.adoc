@@ -51,8 +51,6 @@ operation::user_rest_controller_test/전화번호_중복검사_성공[snippets='
 
 operation::user_rest_controller_test/전화번호_중복검사_실패[snippets='http-response']
 
----
-
 == Session API
 
 === 세션 생성 (로그인)

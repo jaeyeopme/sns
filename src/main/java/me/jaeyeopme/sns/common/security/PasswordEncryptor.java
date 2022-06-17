@@ -1,7 +1,7 @@
 package me.jaeyeopme.sns.common.security;
 
-import me.jaeyeopme.sns.common.security.dto.RawPassword;
 import me.jaeyeopme.sns.user.domain.EncodedPassword;
+import me.jaeyeopme.sns.user.presentation.dto.RawPassword;
 
 public interface PasswordEncryptor {
 

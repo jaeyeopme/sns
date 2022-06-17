@@ -6,8 +6,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import org.junit.jupiter.api.BeforeEach;
 
-
-public class ConstraintViolationTest {
+public abstract class ConstraintViolationTest {
 
     private Validator validator;
 

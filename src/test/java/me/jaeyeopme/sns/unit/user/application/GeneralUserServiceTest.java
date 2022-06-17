@@ -11,7 +11,7 @@ import java.util.Optional;
 import me.jaeyeopme.sns.common.exception.DuplicateEmailException;
 import me.jaeyeopme.sns.common.exception.DuplicatePhoneException;
 import me.jaeyeopme.sns.common.exception.NotFoundEmailException;
-import me.jaeyeopme.sns.support.user.fixture.UserFixture;
+import me.jaeyeopme.sns.support.fixture.UserFixture;
 import me.jaeyeopme.sns.user.application.service.GeneralUserService;
 import me.jaeyeopme.sns.user.domain.User;
 import me.jaeyeopme.sns.user.domain.repository.UserRepository;
@@ -42,15 +42,14 @@ class GeneralUserServiceTest {
         @Test
         void Then_SaveAndReturnId() {
             // GIVEN
-            final var account = UserFixture.ACCOUNT;
-            final var user = User.of(account);
+            final var user = UserFixture.USER;
             final Long expected = 1L;
             ReflectionTestUtils.setField(user, "id", expected);
             given(userRepository.create(any(User.class)))
                 .willReturn(user);
 
             // WHEN
-            final var actual = userService.create(account);
+            final var actual = userService.create(user);
 
             // THEN
             assertThat(actual).isEqualTo(expected);
@@ -83,15 +82,15 @@ class GeneralUserServiceTest {
         void Given_ExistsEmail_Then_ReturnUser() {
             // GIVEN
             final var expected = UserFixture.USER;
-            given(userRepository.findByEmail(expected.account().email()))
+            given(userRepository.findByEmail(expected.email()))
                 .willReturn(Optional.of(expected));
 
             // WHEN
-            final var actual = userService.findByEmail(expected.account().email());
+            final var actual = userService.findByEmail(expected.email());
 
             // THEN
             assertThat(actual).isEqualTo(expected);
-            then(userRepository).should(only()).findByEmail(expected.account().email());
+            then(userRepository).should(only()).findByEmail(expected.email());
         }
 
     }

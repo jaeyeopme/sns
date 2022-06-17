@@ -10,7 +10,7 @@ import static org.mockito.Mockito.only;
 import me.jaeyeopme.sns.common.exception.InvalidSessionException;
 import me.jaeyeopme.sns.session.application.service.GeneralSessionService;
 import me.jaeyeopme.sns.session.domain.repository.SessionRepository;
-import me.jaeyeopme.sns.support.user.fixture.UserFixture;
+import me.jaeyeopme.sns.support.fixture.UserFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
