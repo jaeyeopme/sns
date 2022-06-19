@@ -1,5 +1,6 @@
 package me.jaeyeopme.sns.session.domain.repository;
 
+import java.util.Optional;
 import me.jaeyeopme.sns.session.domain.Principal;
 
 public interface SessionRepository {
@@ -8,6 +9,6 @@ public interface SessionRepository {
 
     void invalidate();
 
-    Principal getPrincipal();
+    Optional<Principal> principal();
 
 }

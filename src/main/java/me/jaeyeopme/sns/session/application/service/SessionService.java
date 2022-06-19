@@ -8,6 +8,6 @@ public interface SessionService {
 
     void invalidate();
 
-    Principal getPrincipal();
+    Principal principal();
 
 }

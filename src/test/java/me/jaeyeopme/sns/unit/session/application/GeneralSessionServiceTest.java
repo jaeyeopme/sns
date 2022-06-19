@@ -7,6 +7,7 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.only;
 
+import java.util.Optional;
 import me.jaeyeopme.sns.common.exception.InvalidSessionException;
 import me.jaeyeopme.sns.session.application.service.GeneralSessionService;
 import me.jaeyeopme.sns.session.domain.repository.SessionRepository;
@@ -66,35 +67,35 @@ class GeneralSessionServiceTest {
 
     @DisplayName("세션 조회 시")
     @Nested
-    public class When_GetPrincipal {
+    public class When_GetSessionPrincipal {
 
         @DisplayName("유효하지 않은 세션인 경우 실패한다.")
         @Test
         void Given_InvalidSession_Then_ThrowException() {
             // GIVEN
-            willThrow(InvalidSessionException.class).given(sessionRepository).getPrincipal();
+            willThrow(InvalidSessionException.class).given(sessionRepository).principal();
 
             // WHEN
-            final Executable when = () -> sessionService.getPrincipal();
+            final Executable when = () -> sessionService.principal();
 
             // THEN
             assertThrows(InvalidSessionException.class, when);
-            then(sessionRepository).should(only()).getPrincipal();
+            then(sessionRepository).should(only()).principal();
         }
 
         @DisplayName("유효한 세션인 경우 성공한다.")
         @Test
         void Given_ValidSession_Then_ReturnPrincipal() {
             // GIVEN
-            final var expected = UserFixture.PRINCIPAL;
-            given(sessionRepository.getPrincipal()).willReturn(expected);
+            final var expected = Optional.of(UserFixture.PRINCIPAL);
+            given(sessionRepository.principal()).willReturn(expected);
 
             // WHEN
-            final var actual = sessionService.getPrincipal();
+            final var actual = sessionService.principal();
 
             // THEN
-            assertThat(actual).isEqualTo(expected);
-            then(sessionRepository).should(only()).getPrincipal();
+            assertThat(actual).isEqualTo(expected.get());
+            then(sessionRepository).should(only()).principal();
         }
 
     }

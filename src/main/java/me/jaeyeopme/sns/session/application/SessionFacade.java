@@ -29,8 +29,8 @@ public class SessionFacade {
         sessionService.invalidate();
     }
 
-    public Principal getPrincipal() {
-        return sessionService.getPrincipal();
+    public Principal principal() {
+        return sessionService.principal();
     }
 
 }

@@ -3,7 +3,6 @@ package me.jaeyeopme.sns.session.infrastructure;
 import java.util.Optional;
 import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import me.jaeyeopme.sns.common.exception.InvalidSessionException;
 import me.jaeyeopme.sns.session.domain.Principal;
 import me.jaeyeopme.sns.session.domain.repository.SessionRepository;
 import org.springframework.stereotype.Repository;
@@ -27,9 +26,8 @@ public class InMemorySessionRepository implements SessionRepository {
     }
 
     @Override
-    public Principal getPrincipal() {
-        return (Principal) Optional.ofNullable(session.getAttribute(SESSION_NAME))
-            .orElseThrow(InvalidSessionException::new);
+    public Optional<Principal> principal() {
+        return Optional.ofNullable((Principal) session.getAttribute(SESSION_NAME));
     }
 
 }

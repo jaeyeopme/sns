@@ -1,20 +1,24 @@
 package me.jaeyeopme.sns.common.security;
 
+import lombok.RequiredArgsConstructor;
 import me.jaeyeopme.sns.session.domain.Principal;
+import org.springframework.stereotype.Component;
 
+@RequiredArgsConstructor
+@Component
 public class SessionContext {
 
     private final static ThreadLocal<Principal> sessionContext = new ThreadLocal<>();
 
-    public static Principal get() {
+    public Principal principal() {
         return sessionContext.get();
     }
 
-    public static void set(final Principal principal) {
+    public void principal(final Principal principal) {
         sessionContext.set(principal);
     }
 
-    public static void clear() {
+    public void clear() {
         sessionContext.remove();
     }
 
