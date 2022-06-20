@@ -1,6 +1,7 @@
 package me.jaeyeopme.sns.session.application.service;
 
 import lombok.RequiredArgsConstructor;
+import me.jaeyeopme.sns.common.exception.InvalidSessionException;
 import me.jaeyeopme.sns.session.domain.Principal;
 import me.jaeyeopme.sns.session.domain.repository.SessionRepository;
 import org.springframework.stereotype.Service;
@@ -22,8 +23,9 @@ public class GeneralSessionService implements SessionService {
     }
 
     @Override
-    public Principal getPrincipal() {
-        return sessionRepository.getPrincipal();
+    public Principal principal() {
+        return sessionRepository.principal()
+            .orElseThrow(InvalidSessionException::new);
     }
 
 }

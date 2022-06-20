@@ -3,6 +3,9 @@ package me.jaeyeopme.sns.support;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import me.jaeyeopme.sns.common.aspect.SessionRequiredAspect;
+import me.jaeyeopme.sns.common.security.SessionContext;
+import me.jaeyeopme.sns.post.application.PostFacade;
+import me.jaeyeopme.sns.post.presentation.PostRestController;
 import me.jaeyeopme.sns.session.application.SessionFacade;
 import me.jaeyeopme.sns.session.presentation.SessionRestController;
 import me.jaeyeopme.sns.user.application.UserFacade;
@@ -19,18 +22,25 @@ import org.springframework.test.web.servlet.MockMvc;
     SessionRequiredAspect.class,
 })
 @WebMvcTest({
+    UserRestController.class,
     SessionRestController.class,
-    UserRestController.class
+    PostRestController.class,
 })
 public abstract class RestControllerTest {
 
     protected MockMvc mockMvc;
 
     @MockBean
+    protected SessionContext sessionContext;
+
+    @MockBean
     protected UserFacade userFacade;
 
     @MockBean
     protected SessionFacade sessionFacade;
+
+    @MockBean
+    protected PostFacade postFacade;
 
     @Autowired
     private ObjectMapper objectMapper;

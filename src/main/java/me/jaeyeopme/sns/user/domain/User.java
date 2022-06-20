@@ -53,4 +53,10 @@ public class User {
             .build();
     }
 
+    public static User reference(final Long id) {
+        return User.builder()
+            .id(id)
+            .build();
+    }
+
 }

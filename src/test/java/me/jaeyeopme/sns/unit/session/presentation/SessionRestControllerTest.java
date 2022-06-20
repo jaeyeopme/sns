@@ -1,6 +1,6 @@
 package me.jaeyeopme.sns.unit.session.presentation;
 
-import static me.jaeyeopme.sns.config.RestDocsConfig.field;
+import static me.jaeyeopme.sns.config.RestDocsConfig.constraintField;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willThrow;
@@ -93,9 +93,9 @@ public class SessionRestControllerTest extends RestDocsTestSupport {
         when.andDo(document(
             requestFields(
                 fieldWithPath("email").type(JsonFieldType.STRING).description("이메일")
-                    .attributes(field("constraints", "이메일 형식")),
+                    .attributes(constraintField("이메일 형식")),
                 fieldWithPath("password").type(JsonFieldType.STRING).description("비밀번호")
-                    .attributes(field("constraints", "최소 8자, 최소 하나의 문자 및 하나의 숫자"))
+                    .attributes(constraintField("최소 8자, 최소 하나의 문자 및 하나의 숫자"))
             )
         ));
     }
@@ -147,7 +147,7 @@ public class SessionRestControllerTest extends RestDocsTestSupport {
     @Test
     void 세션_만료_실패_유효하지_않은_세션인_경우() {
         // GIVEN
-        willThrow(new InvalidSessionException()).given(sessionFacade).getPrincipal();
+        willThrow(new InvalidSessionException()).given(sessionFacade).principal();
 
         // WHEN
         final var when = mockMvc.perform(
@@ -156,7 +156,7 @@ public class SessionRestControllerTest extends RestDocsTestSupport {
 
         // THEN
         when.andExpectAll(status().isUnauthorized());
-        then(sessionFacade).should(only()).getPrincipal();
+        then(sessionFacade).should(only()).principal();
     }
 
     @SneakyThrows
@@ -165,7 +165,7 @@ public class SessionRestControllerTest extends RestDocsTestSupport {
     void 세션_만료_성공() {
         // GIVEN
         final var principal = UserFixture.PRINCIPAL;
-        given(sessionFacade.getPrincipal()).willReturn(principal);
+        given(sessionFacade.principal()).willReturn(principal);
 
         // WHEN
         final var when = mockMvc.perform(
@@ -174,7 +174,7 @@ public class SessionRestControllerTest extends RestDocsTestSupport {
 
         // THEN
         when.andExpectAll(status().isOk());
-        then(sessionFacade).should().getPrincipal();
+        then(sessionFacade).should().principal();
         then(sessionFacade).should().invalidate();
 
         // DOCS
