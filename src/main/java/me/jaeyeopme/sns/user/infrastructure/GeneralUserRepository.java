@@ -12,26 +12,26 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class GeneralUserRepository implements UserRepository {
 
-    private final CrudUserRepository jpaRepository;
+    private final CrudUserRepository crudUserRepository;
 
     @Override
     public User create(final User user) {
-        return jpaRepository.save(user);
+        return crudUserRepository.save(user);
     }
 
     @Override
     public Optional<User> findByEmail(final Email email) {
-        return jpaRepository.findByEmailValue(email.value());
+        return crudUserRepository.findByEmailValue(email.value());
     }
 
     @Override
     public boolean existsByEmail(final Email email) {
-        return jpaRepository.existsByEmailValue(email.value());
+        return crudUserRepository.existsByEmailValue(email.value());
     }
 
     @Override
     public boolean existsByPhone(final Phone phone) {
-        return jpaRepository.existsByPhoneValue(phone.value());
+        return crudUserRepository.existsByPhoneValue(phone.value());
     }
 
 }
